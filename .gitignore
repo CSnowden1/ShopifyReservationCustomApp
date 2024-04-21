@@ -1,0 +1,37 @@
+# Node.js and Express related
+node_modules/
+npm-debug.log
+yarn-error.log
+yarn-debug.log
+logs
+*.log
+runtime
+
+# Environment configuration files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Editor directories and files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Operating system generated files
+.DS_Store
+Thumbs.db
+
+# Optional: build/production files
+/dist
+/build
+/public
+
+# Shopify specific (if applicable)
+.shopify-cli.yml
+.shopifyignore
