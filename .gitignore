@@ -30,7 +30,6 @@ Thumbs.db
 # Optional: build/production files
 /dist
 /build
-/public
 
 # Shopify specific (if applicable)
 .shopify-cli.yml

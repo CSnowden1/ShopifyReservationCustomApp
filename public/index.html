@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Reservation Setup</title>
+</head>
+<body>
+    <h1>Set Up Product Timer</h1>
+    <form id="timerForm">
+        <label for="product">Select Product:</label>
+        <select id="product" name="product">
+            <option value="">Select a product...</option>
+        </select>        
+        <label for="duration">Timer Duration (minutes):</label>
+        <input type="number" id="duration" name="duration" min="1" max="60" required>
+        <button type="submit">Set Timer</button>
+    </form>
+
+    <script src="app.js"></script>
+</body>
+</html>
