@@ -1,22 +1,32 @@
 const express = require('express');
 const router = express.Router();
+const crypto = require('crypto');
+const bodyParser = require('body-parser');
 
-// The product ID we want to track
-const trackedProductId = '1234567890'; // Replace with your hard-coded product ID
+router.use(bodyParser.json()); // for parsing application/json
 
-// Route to handle POST requests to '/webhooks/carts-update'
-router.post('/webhooks/carts-update', (req, res) => {
-  const { line_items } = req.body;
+// Function to verify the webhook data from Shopify
+function verifyWebhook(data, hmacHeader) {
+  const generatedHash = crypto
+    .createHmac('sha256', process.env.SHOPIFY_API_SECRET)
+    .update(data, 'utf8', 'hex')
+    .digest('base64');
+
+  return crypto.timingSafeEqual(Buffer.from(generatedHash), Buffer.from(hmacHeader));
+}
+
+// Webhook endpoint for 'carts/update'
+router.post('/carts-update', (req, res) => {
+  const hmacHeader = req.get('X-Shopify-Hmac-Sha256');
+  const data = JSON.stringify(req.body);
+
+  if (!verifyWebhook(data, hmacHeader)) {
+    return res.status(401).send('Webhook not verified');
+  }
+
+  console.log('Received cart update webhook:', req.body);
   
-  // Check if any of the line items match the tracked product ID
-  line_items.forEach(item => {
-    if (item.product_id.toString() === trackedProductId) {
-      console.log(`Product with ID ${trackedProductId} added to cart in quantity ${item.quantity}`);
-      // Perform any additional actions here
-    }
-  });
-  
-  // Respond to Shopify to acknowledge receipt of the webhook
+  // Acknowledge receipt of the webhook
   res.status(200).send('Webhook processed');
 });
 
