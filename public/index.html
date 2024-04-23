@@ -4,19 +4,49 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product Reservation Setup</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <meta name="shopify-api-key" content="your-shopify-api-key">
 </head>
 <body>
-    <h1>Set Up Product Timer</h1>
-    <form id="timerForm">
-        <label for="product">Select Product:</label>
-        <select id="product" name="product">
-            <option value="">Select a product...</option>
-        </select>        
-        <label for="duration">Timer Duration (minutes):</label>
-        <input type="number" id="duration" name="duration" min="1" max="60" required>
-        <button type="submit">Set Timer</button>
-    </form>
+    <div class="container mt-5">
+        <h1>Set Up Product Timer</h1>
+        <form id="timerForm" class="mb-3">
+            <div class="form-group">
+                <label for="productSelect">Select Product:</label>
+                <select id="productSelect" name="product" class="form-control">
+                    <!-- Product options will be populated here -->
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="variantSelect">Select Variant:</label>
+                <select id="variantSelect" name="variant" class="form-control">
+                    <!-- Variant options will be populated here -->
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="duration">Timer Duration (minutes):</label>
+                <input type="number" id="duration" name="duration" min="1" max="60" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-success">Set Timer</button>
+        </form>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th id="gridTitle">Title</th>
+                    <th id="gridVariantID">Variant ID</th>
+                    <th id="gridLiveStock">Live Stock</th>
+                    <th id="gridTimer">Timer</th>
+                </tr>
+            </thead>
+            <tbody id="productGrid">
+                <!-- Product rows will be populated here -->
+            </tbody>
+        </table>
+    </div>
 
     <script src="app.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

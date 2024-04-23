@@ -4,9 +4,15 @@ const bodyParser = require('body-parser'); // Middleware to parse JSON bodies
 const dotenv = require('dotenv'); // To manage environment variables
 const morgan = require('morgan'); // HTTP request logger middleware
 const cors = require('cors'); // Middleware to enable CORS
+const connectDB = require('./db/database');
+require('dotenv').config();
+
+
 
 // Import routes
-const reservationRoutes = require('./routes/reservationRoutes');
+const productRoutes = require('./routes/productRoutes');
+const cartUpdateRoutes = require('./routes/cartUpdateRoutes');
+
 
 // Initialize dotenv to load up environment variables from .env file
 dotenv.config();
@@ -15,7 +21,7 @@ dotenv.config();
 const app = express();
 
 // Port configuration for the server to listen on
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors()); // Enables CORS for all domains
@@ -33,8 +39,10 @@ app.get('/', (req, res) => {
 app.use(express.static('public'));
 
 // API routes (prefixed with /api)
-app.use('/api', reservationRoutes);
+app.use('/api', productRoutes);
 
+
+app.use('/webhooks', cartUpdateRoutes);
 // Catch-all for unmatched routes
 app.use((req, res) => {
   res.status(404).send("Sorry, can't find that!");
@@ -51,5 +59,7 @@ app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
+
+connectDB();
 // Export the app for testing purposes
 module.exports = app;
