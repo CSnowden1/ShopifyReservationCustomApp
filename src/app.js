@@ -62,8 +62,6 @@ app.use((error, req, res, next) => {
   res.status(500).send('Internal Server Error');
 });
 
-// Connect to database
-connectDB();
 
 // Start the server
 app.listen(PORT, () => {
