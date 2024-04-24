@@ -15,9 +15,6 @@ const shopify = new Shopify({
 router.use(bodyParser.json()); // for parsing application/json
 
 
-
-
-
 // Function to verify the webhook data from Shopify
 function verifyWebhook(data, hmacHeader) {
   const generatedHash = crypto
@@ -54,5 +51,6 @@ router.get('/list-webhooks', async (req, res) => {
       res.status(500).json({ error: error.message });
     }
   });
+
 
 module.exports = router;
