@@ -29,7 +29,7 @@ function verifyWebhook(data, hmacHeader) {
 }
 
 // Webhook endpoint for 'carts/update'
-router.post('/webhooks/carts-update', (req, res) => {
+router.post('/carts-update', (req, res) => {
   const hmacHeader = req.get('X-Shopify-Hmac-Sha256');
   const data = JSON.stringify(req.body);
 
@@ -45,7 +45,7 @@ router.post('/webhooks/carts-update', (req, res) => {
 
 
 // Route to list all webhooks
-router.get('/webhooks/list-webhooks', async (req, res) => {
+router.get('/list-webhooks', async (req, res) => {
     try {
       const webhooks = await shopify.webhook.list();
       res.json(webhooks);
