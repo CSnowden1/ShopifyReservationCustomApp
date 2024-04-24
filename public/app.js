@@ -41,10 +41,10 @@ document.getElementById('productSelect').addEventListener('change', async (event
     
     try {
       // Fetch variants for the selected product
-      const response = await fetch(`http://localhost:5000/api/products/${selectedProductId}/variants`, {
+      const response = await fetch(`http://shopify-res-app-d429dd3eb80d.herokuapp.com/api/products/${selectedProductId}/variants`, {
         method: 'GET'
       });
-  
+
       if (!response.ok) {
         throw new Error('Failed to fetch variants');
       }
@@ -107,7 +107,7 @@ document.getElementById('timerForm').addEventListener('submit', (event) => {
     productGrid.appendChild(row);
 
     // Optionally send a message to the server (e.g., log or notify)
-    fetch('http://localhost:5000/api/live-products', {
+    fetch('https://shopify-res-app-d429dd3eb80d.herokuapp.com/api/live-products', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
