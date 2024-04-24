@@ -26,12 +26,19 @@ function verifyWebhook(data, hmacHeader) {
 }
 
 router.post('/carts-update', (req, res) => {
-    // Log the headers and body for debugging
-    console.log('Headers:', req.headers);
-    console.log('Body:', req.body);
-  
-    res.status(200).send('Webhook processed');
-  });
+    try {
+        // Log the headers and body for debugging
+        console.log('Headers:', req.headers);
+        console.log('Body:', req.body);
+        res.status(200).send('Webhook processed');
+    } catch (error) {
+        console.error('Error processing webhook:', error.message);
+        // Respond with a server error status code and message
+        res.status(500).send('An error occurred while processing the webhook');
+    }
+});
+
+
 
 // Route to list all webhooks
 router.get('/list-webhooks', async (req, res) => {
