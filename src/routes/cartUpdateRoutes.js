@@ -37,8 +37,6 @@ function shouldStartCheckoutSession(itemId) {
 
 router.post('/carts-update', async (req, res) => {
     try {
-        const { cartId, lineItems } = req.body;
-       // console.log('Body:', req.body);
        // console.log('Cart Id:', req.body.id);
        req.body.line_items.forEach(item => {
         if (shouldStartCheckoutSession(item.variant_id)) {
@@ -47,7 +45,7 @@ router.post('/carts-update', async (req, res) => {
           const endTime = new Date(startTime.getTime() + duration * 60000);
           // Create and store the session.
           console.log(`
-                      Cart Id:${cartId}
+                      Cart Id:${item.cartId}
                       Reserved Item: ${item.title}
                       Quantity: ${item.quantity}
                       Start Time: ${startTime}
