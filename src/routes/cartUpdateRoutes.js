@@ -25,53 +25,18 @@ function verifyWebhook(data, hmacHeader) {
   return crypto.timingSafeEqual(Buffer.from(generatedHash), Buffer.from(hmacHeader));
 }
 
-function shouldStartCheckoutSession(itemId) {
-    return true;
-  }
-
-
-  // Mock function to create a checkout session
-async function createCheckoutSession(cartId, itemId, quantity) {
-    const sessionId = 'unique-session-id'; 
-    const duration = 1;
-  
-    return { id: sessionId, duration: duration };
-  }
-
-
-  async function isSessionActive(sessionId) {
-    return true;
-  }
-
-  async function removeItemFromCart(cartId, itemId) {
-    console.log(`Item ${itemId} removed from cart ${cartId}`);
-  }
-
-
-router.post('/webhooks/carts-update', async (req, res) => {
-    const { cart } = req.body;
-    console.log('Cart updated:', cart);
-  
-    // Check if cart contains item that should start a checkout session
-    const item = cart.items.find(item => shouldStartCheckoutSession(item.id));
-    if (item) {
-      // Create a record in your database for the checkout session
-      const session = await createCheckoutSession(cart.id, item.id, item.quantity);
-  
-      // Start a timer
-      setTimeout(async () => {
-        // Timer ends, check if the session is still active
-        if (await isSessionActive(session.id)) {
-          // Session is active, remove item from cart
-          await removeItemFromCart(cart.id, item.id);
-          // Optionally notify the customer that the item has been removed
-        }
-      }, session.duration * 60 * 1000); // Duration in milliseconds
+router.post('/carts-update', (req, res) => {
+    try {
+        // Log the headers and body for debugging
+        console.log('Headers:', req.headers);
+        console.log('Body:', req.body);
+        res.status(200).send('Item Added to a Cart', res);
+    } catch (error) {
+        console.error('Error processing webhook:', error.message);
+        // Respond with a server error status code and message
+        res.status(500).send('An error occurred while processing the webhook');
     }
-  
-    // Respond to Shopify to acknowledge receipt of the webhook
-    res.status(200).send('Webhook received');
-  });
+});
 
 
 
