@@ -40,8 +40,7 @@ router.post('/carts-update', (req, res) => {
         console.log('Cart Id:', req.body.id);
         req.body.line_items.forEach(item => {
             if (shouldStartCheckoutSession(item.variant_id)) {
-              console.log(`Cart contains a reservation item with variant ID: ${item.variant_id}`);
-              // You can now call createCheckoutSession or any other necessary functions here.
+              console.log(`Cart contains a reservation item '${item.title}' with variant ID: ${item.variant_id}. Creating reservation session for cart session ${req.body.id} if one doesn't exists` );
             }
           });
         res.status(200).send('Item Added to a Cart');
