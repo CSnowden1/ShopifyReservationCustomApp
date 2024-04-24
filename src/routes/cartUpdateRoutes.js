@@ -3,6 +3,7 @@ const router = express.Router();
 const crypto = require('crypto');
 const bodyParser = require('body-parser');
 const Shopify = require('shopify-api-node');
+const CartSession = mongoose.model('CartSession', CartSessionSchema);
 
 // Initialize Shopify API node with credentials
 const shopify = new Shopify({
@@ -14,8 +15,14 @@ const shopify = new Shopify({
 
 router.use(bodyParser.json()); // for parsing application/json
 
+// Define the schema for a cart session.
+const CartSessionSchema = new mongoose.Schema({
+    cartId: String,
+    startTime: Date,
+    duration: Number,
+  });
+  
 
-// Function to verify the webhook data from Shopify
 function verifyWebhook(data, hmacHeader) {
   const generatedHash = crypto
     .createHmac('sha256', process.env.SHOPIFY_API_SECRET)
@@ -33,14 +40,32 @@ function shouldStartCheckoutSession(itemId) {
     }
   }
 
-router.post('/carts-update', (req, res) => {
+
+router.post('/carts-update', async (req, res) => {
     try {
-        // Log the headers and body for debugging
+        const { cartId, lineItems } = req.body;
         console.log('Body:', req.body);
         console.log('Cart Id:', req.body.id);
+        const reservationItem = lineItems.find(item => shouldStartCheckoutSession(item.variant_id));
+
+        if (reservationItem) {
+            const duration = 30; // in minutes
+            const startTime = new Date();
+            const endTime = new Date(startTime.getTime() + duration * 60000);
+
+            // Create and store the session.
+            console.log(`
+                        Cart Id:${cartId}
+                        Reserved Item: ${item.title}
+                        Quantity: ${item.quantity}
+                        Start Time: ${startTime}
+                        End Time: ${endTime}
+            `);
+        }
         req.body.line_items.forEach(item => {
             if (shouldStartCheckoutSession(item.variant_id)) {
               console.log(`Cart contains a reservation item '${item.title}' with variant ID: ${item.variant_id}. Creating reservation session for cart session ${req.body.id} if one doesn't exists` );
+
             }
           });
         res.status(200).send('Item Added to a Cart');
