@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     const variantSelect = document.getElementById('variantSelect');
 
     try {
-        const response = await fetch('http://localhost:5000/api/products', {
+        const response = await fetch('http://shopify-res-app-d429dd3eb80d.herokuapp.com/api/products', {
             method: 'GET'
         });
 
