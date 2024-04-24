@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     const variantSelect = document.getElementById('variantSelect');
 
     try {
-        const response = await fetch('http://shopify-res-app-d429dd3eb80d.herokuapp.com/api/products', {
+        const response = await fetch('https://shopify-res-app-d429dd3eb80d.herokuapp.com/api/products', {
             method: 'GET'
         });
 
@@ -41,7 +41,7 @@ document.getElementById('productSelect').addEventListener('change', async (event
     
     try {
       // Fetch variants for the selected product
-      const response = await fetch(`http://shopify-res-app-d429dd3eb80d.herokuapp.com/api/products/${selectedProductId}/variants`, {
+      const response = await fetch(`https://shopify-res-app-d429dd3eb80d.herokuapp.com/api/products/${selectedProductId}/variants`, {
         method: 'GET'
       });
 
