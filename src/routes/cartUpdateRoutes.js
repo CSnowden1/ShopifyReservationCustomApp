@@ -40,28 +40,24 @@ router.post('/carts-update', async (req, res) => {
         const { cartId, lineItems } = req.body;
        // console.log('Body:', req.body);
        // console.log('Cart Id:', req.body.id);
-        const reservationItem = lineItems.find(item => shouldStartCheckoutSession(item.variant_id));
-
-        if (reservationItem) {
-            const duration = 30; // in minutes
-            const startTime = new Date();
-            const endTime = new Date(startTime.getTime() + duration * 60000);
-
-            // Create and store the session.
-            console.log(`
-                        Cart Id:${cartId}
-                        Reserved Item: ${item.title}
-                        Quantity: ${item.quantity}
-                        Start Time: ${startTime}
-                        End Time: ${endTime}
-            `);
+       req.body.line_items.forEach(item => {
+        if (shouldStartCheckoutSession(item.variant_id)) {
+          const duration = 30; // in minutes
+          const startTime = new Date();
+          const endTime = new Date(startTime.getTime() + duration * 60000);
+          // Create and store the session.
+          console.log(`
+                      Cart Id:${cartId}
+                      Reserved Item: ${item.title}
+                      Quantity: ${item.quantity}
+                      Start Time: ${startTime}
+                      End Time: ${endTime}
+          `);
         }
-        req.body.line_items.forEach(item => {
-            if (shouldStartCheckoutSession(item.variant_id)) {
-              console.log(`Cart contains a reservation item '${item.title}' with variant ID: ${item.variant_id}. Creating reservation session for cart session ${req.body.id} if one doesn't exists` );
+      });
 
-            }
-          });
+      
+      
         res.status(200).send('Item Added to a Cart');
     } catch (error) {
         console.error('Error processing webhook:', error.message);
