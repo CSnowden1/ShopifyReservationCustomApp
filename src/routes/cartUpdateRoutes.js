@@ -45,7 +45,7 @@ router.post('/carts-update', async (req, res) => {
           const endTime = new Date(startTime.getTime() + duration * 60000);
           // Create and store the session.
           console.log(`
-                      Cart Id:${item.cartId}
+                      Cart Id:${item.id}
                       Reserved Item: ${item.title}
                       Quantity: ${item.quantity}
                       Start Time: ${startTime}
