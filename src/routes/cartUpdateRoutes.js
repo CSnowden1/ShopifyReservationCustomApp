@@ -25,11 +25,25 @@ function verifyWebhook(data, hmacHeader) {
   return crypto.timingSafeEqual(Buffer.from(generatedHash), Buffer.from(hmacHeader));
 }
 
+
+
+function shouldStartCheckoutSession(itemId) {
+    if(itemId === 45121949630715) {
+        return true;
+    }
+  }
+
 router.post('/carts-update', (req, res) => {
     try {
         // Log the headers and body for debugging
         console.log('Body:', req.body);
         console.log('Cart Id:', req.body.id);
+        req.body.line_items.forEach(item => {
+            if (shouldStartCheckoutSession(item.variant_id)) {
+              console.log(`Cart contains a reservation item with variant ID: ${item.variant_id}`);
+              // You can now call createCheckoutSession or any other necessary functions here.
+            }
+          });
         res.status(200).send('Item Added to a Cart');
     } catch (error) {
         console.error('Error processing webhook:', error.message);
