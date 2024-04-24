@@ -30,7 +30,7 @@ router.post('/carts-update', (req, res) => {
         // Log the headers and body for debugging
         console.log('Headers:', req.headers);
         console.log('Body:', req.body);
-        res.status(200).send('Item Added to a Cart', res.json());
+        res.status(200).send('Item Added to a Cart', res);
     } catch (error) {
         console.error('Error processing webhook:', error.message);
         // Respond with a server error status code and message
