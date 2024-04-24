@@ -25,12 +25,13 @@ function verifyWebhook(data, hmacHeader) {
   return crypto.timingSafeEqual(Buffer.from(generatedHash), Buffer.from(hmacHeader));
 }
 
-// Webhook endpoint for 'carts/update'
 router.post('/carts-update', (req, res) => {
-  console.log('Received cart update webhook:', req.body);
-  res.status(200).send('Webhook processed');
-});
-
+    // Log the headers and body for debugging
+    console.log('Headers:', req.headers);
+    console.log('Body:', req.body);
+  
+    res.status(200).send('Webhook processed');
+  });
 
 // Route to list all webhooks
 router.get('/list-webhooks', async (req, res) => {
