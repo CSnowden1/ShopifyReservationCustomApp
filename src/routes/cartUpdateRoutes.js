@@ -38,8 +38,8 @@ function shouldStartCheckoutSession(itemId) {
 router.post('/carts-update', async (req, res) => {
     try {
         const { cartId, lineItems } = req.body;
-        console.log('Body:', req.body);
-        console.log('Cart Id:', req.body.id);
+       // console.log('Body:', req.body);
+       // console.log('Cart Id:', req.body.id);
         const reservationItem = lineItems.find(item => shouldStartCheckoutSession(item.variant_id));
 
         if (reservationItem) {
