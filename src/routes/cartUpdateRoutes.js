@@ -3,7 +3,6 @@ const router = express.Router();
 const crypto = require('crypto');
 const bodyParser = require('body-parser');
 const Shopify = require('shopify-api-node');
-const CartSession = mongoose.model('CartSession', CartSessionSchema);
 
 // Initialize Shopify API node with credentials
 const shopify = new Shopify({
@@ -16,12 +15,7 @@ const shopify = new Shopify({
 router.use(bodyParser.json()); // for parsing application/json
 
 // Define the schema for a cart session.
-const CartSessionSchema = new mongoose.Schema({
-    cartId: String,
-    startTime: Date,
-    duration: Number,
-  });
-  
+
 
 function verifyWebhook(data, hmacHeader) {
   const generatedHash = crypto
