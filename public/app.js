@@ -109,7 +109,7 @@ document.getElementById('timerForm').addEventListener('submit', (event) => {
     `;
   
     productGrid.appendChild(row);
-  
+    
     // Post to the server
     fetch('https://shopify-res-app-d429dd3eb80d.herokuapp.com/api/products/live-products', {
       method: 'POST',
@@ -117,8 +117,8 @@ document.getElementById('timerForm').addEventListener('submit', (event) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        productId:  selectedProductId,// Assuming the format is 'productId:variantId'
-        variantId: selectedVariantId.split(':')[1],
+        productId:  selectedProductId,
+        variantId: selectedVariantId,
         title: selectedProductTitle,
         inventoryCount: parseInt(inventoryQuantity),
         reservationDuration: parseInt(timerDuration)
