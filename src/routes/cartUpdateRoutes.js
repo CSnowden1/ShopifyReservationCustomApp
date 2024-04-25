@@ -36,7 +36,7 @@ function shouldStartCheckoutSession(itemId) {
 
     router.post('/carts-update', async (req, res) => {
       try {
-        console.log('req.body: ' + req.body)
+        console.log('req.body: ' + req.body.json());
         req.body.line_items.forEach(item => {
           if (shouldStartCheckoutSession(item.variant_id)) {
             const duration = 30; // in minutes
