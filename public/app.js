@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         const products = await response.json();
         const productList = products.products;
 
-        productSelect.innerHTML = ''; // Clear existing options
+        productSelect.innerHTML = '';
 
         // Populate the product dropdown
         productList.forEach(product => {
@@ -83,39 +83,50 @@ document.getElementById('productSelect').addEventListener('change', async (event
 
 document.getElementById('timerForm').addEventListener('submit', (event) => {
     event.preventDefault();
-    
+  
     const productSelect = document.getElementById('productSelect');
     const variantSelect = document.getElementById('variantSelect');
     const durationInput = document.getElementById('duration');
     const productGrid = document.getElementById('productGrid');
-    
+  
     // Extract selected product and variant details
     const selectedProductTitle = productSelect.options[productSelect.selectedIndex].text;
     const selectedVariantId = variantSelect.value;
     const inventoryQuantity = variantSelect.options[variantSelect.selectedIndex].getAttribute('data-inventory-quantity');
     const timerDuration = durationInput.value;
-    
+  
     // Append new row to the product grid
     const row = document.createElement('tr');
     row.innerHTML = `
-        <td>${selectedProductTitle}</td>
-        <td>${selectedVariantId}</td>
-        <td>${inventoryQuantity}</td>
-        <td>${timerDuration} minutes</td>
+      <td>${selectedProductTitle}</td>
+      <td>${selectedVariantId}</td>
+      <td>${inventoryQuantity}</td>
+      <td>${timerDuration} minutes</td>
     `;
-    
+  
     productGrid.appendChild(row);
-
-    // Optionally send a message to the server (e.g., log or notify)
-    fetch('https://shopify-res-app-d429dd3eb80d.herokuapp.com/api/live-products', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ variantId: selectedVariantId, timerDuration })
+  
+    // Post to the server
+    fetch('https://shopify-res-app-d429dd3eb80d.herokuapp.com/api/products/live-products', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        productId: selectedVariantId.split(':')[0], // Assuming the format is 'productId:variantId'
+        variantId: selectedVariantId.split(':')[1],
+        title: selectedProductTitle,
+        inventoryQuantity: parseInt(inventoryQuantity),
+        timerDuration: parseInt(timerDuration)
+      })
     }).then(response => {
-        console.log('Server notified of product timer setup');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.json();
+    }).then(data => {
+      console.log('Product timer setup success:', data);
     }).catch(error => {
-        console.error('Error notifying server:', error);
+      console.error('Error posting to server:', error);
     });
-});
+  });
