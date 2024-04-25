@@ -46,15 +46,6 @@ function shouldStartCheckoutSession(itemId) {
             const startTime = new Date();
             const endTime = new Date(startTime.getTime() + duration * 60000);
             
-            // Emit to WebSocket clients
-            io.emit('cart-updated', {
-              cartId: req.body.id,
-              itemId: item.id,
-              title: item.title,
-              quantity: item.quantity,
-              startTime,
-              endTime
-            });
   
             console.log(`
               Cart Id:${req.id}
