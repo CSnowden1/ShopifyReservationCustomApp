@@ -110,8 +110,9 @@ router.post('/products/live-products', async (req, res) => {
         productId: req.body.productId,
         variantId: req.body.variantId,
         title: req.body.title,
-        description: req.body.description,
-        variants: req.body.variants
+        reservationDuration: req.body.reservationDuration,
+        liveQuantity: req.body.inventoryCount
+
       });
   
       const savedProduct = await newProduct.save();

@@ -15,11 +15,16 @@ const productSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  description: {
-    type: String,
-    required: false
+  reservationDuration: {
+    type: Number,
+    required: true
+  },
+  liveQuantity: {
+    type: Number,
+    required: true
   }
 });
+
 
 const Product = mongoose.model('Product', productSchema);
 
