@@ -36,14 +36,14 @@ function shouldStartCheckoutSession(itemId) {
 
     router.post('/carts-update', async (req, res) => {
       try {
-        console.log('req.body: ' + req.json());
+        console.log('Body:', req.body); 
         req.body.line_items.forEach(item => {
           if (shouldStartCheckoutSession(item.variant_id)) {
             const duration = 30; // in minutes
             const startTime = new Date();
             const endTime = new Date(startTime.getTime() + duration * 60000);
             console.log(`
-              Cart Id:${req.id}
+              Cart Id:${req.body.id}
               Reserved Item: ${item.title}
               Quantity: ${item.quantity}
               Start Time: ${startTime}
