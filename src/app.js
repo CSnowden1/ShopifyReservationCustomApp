@@ -27,11 +27,6 @@ shopify.webhook.create({
     (err) => console.error('Error creating webhook:', err)
 );
 
-// Import routes
-const productRoutes = require('./routes/productRoutes');
-const cartUpdateRoutes = require('./routes/cartUpdateRoutes')(io); // Pass io instance to your routes
-const setupWebSocket = require('./services/websocket'); // Use the actual path to your websocket.js file
-
 
 
 // Create an Express application
@@ -50,6 +45,13 @@ app.use(morgan('dev'));
 
 const server = http.createServer(app);
 const io = socketIo(server);
+
+
+
+// Import routes
+const productRoutes = require('./routes/productRoutes');
+const cartUpdateRoutes = require('./routes/cartUpdateRoutes')(io); // Pass io instance to your routes
+const setupWebSocket = require('./services/websocket'); // Use the actual path to your websocket.js file
 
 
 // Serve static files
