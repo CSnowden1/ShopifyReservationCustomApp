@@ -158,7 +158,7 @@ document.getElementById('timerForm').addEventListener('submit', (event) => {
             row.innerHTML = `
                 <td>${product.title}</td>
                 <td>${product.productId}</td>
-                <td>${product.inventoryCount}</td>
+                <td>${product.liveQuantity}</td>
                 <td>${product.reservationDuration} minutes</td>
             `;
             productGrid.appendChild(row);
