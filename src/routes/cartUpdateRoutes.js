@@ -34,10 +34,6 @@ function shouldStartCheckoutSession(itemId) {
     }
   }
 
-
-  module.exports = function(io) {
-    const router = require('express').Router();
-  
     router.post('/carts-update', async (req, res) => {
       try {
         req.body.line_items.forEach(item => {
@@ -45,8 +41,6 @@ function shouldStartCheckoutSession(itemId) {
             const duration = 30; // in minutes
             const startTime = new Date();
             const endTime = new Date(startTime.getTime() + duration * 60000);
-            
-  
             console.log(`
               Cart Id:${req.id}
               Reserved Item: ${item.title}
@@ -63,9 +57,6 @@ function shouldStartCheckoutSession(itemId) {
         res.status(500).send('An error occurred while processing the webhook');
       }
     });
-  
-    return router;
-  };
 
 
 // Route to list all webhooks
