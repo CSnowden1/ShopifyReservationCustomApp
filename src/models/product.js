@@ -9,7 +9,7 @@ const productSchema = new mongoose.Schema({
   variantId: {
     type: String,
     required: true,
-    unique: true
+    unique: false
   },
   title: {
     type: String,
