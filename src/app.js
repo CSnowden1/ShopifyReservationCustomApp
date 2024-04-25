@@ -51,7 +51,6 @@ const server = http.createServer(app);
 // Import routes
 const productRoutes = require('./routes/productRoutes');
 const cartUpdateRoutes = require('./routes/cartUpdateRoutes')// Pass io instance to your routes
-const setupWebSocket = require('./services/websocket'); // Use the actual path to your websocket.js file
 
 
 // Serve static files

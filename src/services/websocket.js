@@ -1,6 +1,5 @@
 // Import dependencies
 const socketIo = require('socket.io');
-const CartSession = require('./models/CartSession'); // Replace with your actual path
 
 module.exports = (server) => {
   const io = socketIo(server);
