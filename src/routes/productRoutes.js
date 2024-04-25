@@ -107,6 +107,7 @@ router.post('/products/live-products', async (req, res) => {
     try {
       const newProduct = new Product({
         productId: req.body.productId,
+        variantId: req.body.variantId,
         title: req.body.title,
         description: req.body.description,
         variants: req.body.variants
