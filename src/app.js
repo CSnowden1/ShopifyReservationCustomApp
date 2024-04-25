@@ -7,6 +7,8 @@ const cors = require('cors');
 const connectDB = require('./db/database');
 require('dotenv').config();
 const Shopify = require('shopify-api-node');
+const connectDB = require('./db/database'); // Adjust the path as necessary
+
 
 // Initialize Shopify API client
 const shopify = new Shopify({
@@ -74,7 +76,8 @@ app.use((error, req, res, next) => {
   console.error(`Error: ${error.message}`);
   res.status(500).send('Internal Server Error');
 });
-
+// Connect to Database
+connectDB();
 
 // Start the server
 app.listen(PORT, () => {

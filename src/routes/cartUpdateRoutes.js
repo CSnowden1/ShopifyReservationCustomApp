@@ -43,7 +43,7 @@ function shouldStartCheckoutSession(itemId) {
             const startTime = new Date();
             const endTime = new Date(startTime.getTime() + duration * 60000);
             console.log(`
-              Cart Id:${req.body.id}
+              Cart Id:${req.body.token}
               Reserved Item: ${item.title}
               Quantity: ${item.quantity}
               Start Time: ${startTime}

@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const https = require('https');
+const Product = require('../models/product'); 
 
 
 
@@ -100,5 +101,24 @@ function getShopifyProductVariants(shopDomain, accessToken, productId, callback)
   });
 
 
+
+// POST route to add a new product and its variants
+router.post('/products/stored', async (req, res) => {
+    try {
+      const newProduct = new Product({
+        productId: req.body.productId,
+        title: req.body.title,
+        description: req.body.description,
+        variants: req.body.variants
+      });
+  
+      const savedProduct = await newProduct.save();
+  
+      res.status(201).json(savedProduct);
+    } catch (error) {
+      console.error('Error saving product:', error);
+      res.status(500).json({ message: 'Error saving product', error: error });
+    }
+  });
 
 module.exports = router;

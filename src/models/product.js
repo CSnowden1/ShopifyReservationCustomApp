@@ -10,10 +10,6 @@ const variantSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  price: {
-    type: Number,
-    required: true
-  },
   inventoryCount: {
     type: Number,
     required: true,
