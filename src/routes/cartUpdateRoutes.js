@@ -36,6 +36,7 @@ function shouldStartCheckoutSession(itemId) {
 
     router.post('/carts-update', async (req, res) => {
       try {
+        console.log('req.body: ' + req.body)
         req.body.line_items.forEach(item => {
           if (shouldStartCheckoutSession(item.variant_id)) {
             const duration = 30; // in minutes
@@ -57,6 +58,7 @@ function shouldStartCheckoutSession(itemId) {
         res.status(500).send('An error occurred while processing the webhook');
       }
     });
+
 
 
 // Route to list all webhooks
