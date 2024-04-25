@@ -6,11 +6,6 @@ const productSchema = new mongoose.Schema({
     required: true,
     unique: true
   },
-  variantId: {
-    type: String,
-    required: true,
-    unique: false
-  },
   title: {
     type: String,
     required: true
