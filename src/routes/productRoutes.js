@@ -105,7 +105,6 @@ function getShopifyProductVariants(shopDomain, accessToken, productId, callback)
 // POST route to add a new product and its variants
 router.post('/products/live-products', async (req, res) => {
     try {
-        console.log(req.body.variantId);
       const newProduct = new Product({
         productId: req.body.productId,
         title: req.body.title,

@@ -118,7 +118,6 @@ document.getElementById('timerForm').addEventListener('submit', (event) => {
       },
       body: JSON.stringify({
         productId:  selectedProductId,
-        variantId: selectedVariantId,
         title: selectedProductTitle,
         inventoryCount: parseInt(inventoryQuantity),
         reservationDuration: parseInt(timerDuration)
