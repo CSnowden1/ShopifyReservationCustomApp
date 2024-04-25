@@ -29,7 +29,10 @@ shopify.webhook.create({
 
 // Import routes
 const productRoutes = require('./routes/productRoutes');
-const cartUpdateRoutes = require('./routes/cartUpdateRoutes');
+const cartUpdateRoutes = require('./routes/cartUpdateRoutes')(io); // Pass io instance to your routes
+const setupWebSocket = require('./services/websocket'); // Use the actual path to your websocket.js file
+
+
 
 // Create an Express application
 const app = express();
@@ -39,6 +42,15 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(bodyParser.json());
 app.use(morgan('dev'));
+
+
+
+
+// Set up WebSocket communication on the server
+
+const server = http.createServer(app);
+const io = socketIo(server);
+
 
 // Serve static files
 app.use(express.static('public'));

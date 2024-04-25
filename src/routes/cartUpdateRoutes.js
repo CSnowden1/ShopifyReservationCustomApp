@@ -35,35 +35,46 @@ function shouldStartCheckoutSession(itemId) {
   }
 
 
-router.post('/carts-update', async (req, res) => {
-    try {
-       // console.log('Cart Id:', req.body.id);
-       req.body.line_items.forEach(item => {
-        if (shouldStartCheckoutSession(item.variant_id)) {
-          const duration = 30; // in minutes
-          const startTime = new Date();
-          const endTime = new Date(startTime.getTime() + duration * 60000);
-          // Create and store the session.
-          console.log(`
-                      Cart Id:${item.id}
-                      Reserved Item: ${item.title}
-                      Quantity: ${item.quantity}
-                      Start Time: ${startTime}
-                      End Time: ${endTime}
-          `);
-        }
-      });
-
-      
-      
+  module.exports = function(io) {
+    const router = require('express').Router();
+  
+    router.post('/carts-update', async (req, res) => {
+      try {
+        req.body.line_items.forEach(item => {
+          if (shouldStartCheckoutSession(item.variant_id)) {
+            const duration = 30; // in minutes
+            const startTime = new Date();
+            const endTime = new Date(startTime.getTime() + duration * 60000);
+            
+            // Emit to WebSocket clients
+            io.emit('cart-updated', {
+              cartId: req.body.id,
+              itemId: item.id,
+              title: item.title,
+              quantity: item.quantity,
+              startTime,
+              endTime
+            });
+  
+            console.log(`
+              Cart Id:${req.id}
+              Reserved Item: ${item.title}
+              Quantity: ${item.quantity}
+              Start Time: ${startTime}
+              End Time: ${endTime}
+            `);
+          }
+        });
+  
         res.status(200).send('Item Added to a Cart');
-    } catch (error) {
+      } catch (error) {
         console.error('Error processing webhook:', error.message);
-        // Respond with a server error status code and message
         res.status(500).send('An error occurred while processing the webhook');
-    }
-});
-
+      }
+    });
+  
+    return router;
+  };
 
 
 // Route to list all webhooks
