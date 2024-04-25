@@ -31,7 +31,6 @@ document.addEventListener('DOMContentLoaded', async function() {
     productSelect.addEventListener('change', async (event) => {
         const selectedProductId = event.target.value;
         console.log(`Selected product ID: ${selectedProductId}`);
-        console.log(`Selected product ID: ${selectedProductId}`);
     });
 });
 
@@ -64,6 +63,7 @@ document.getElementById('productSelect').addEventListener('change', async (event
         option.value = variant.id;
         option.textContent = variant.title;
         option.setAttribute('data-inventory-quantity', variant.inventory_quantity);
+        option.setAttribute('data-product-id', selectedProductId);
         variantSelect.appendChild(option);
 
       });
@@ -77,6 +77,7 @@ document.getElementById('productSelect').addEventListener('change', async (event
     const selectedVariantId = event.target.value;
     const selectedVariantOption = event.target.options[event.target.selectedIndex];
     const inventoryQuantity = selectedVariantOption.getAttribute('data-inventory-quantity');
+    const productId = selectedVariantOption.getAttribute('data-product-id');
     
     console.log(`Selected variant ID: ${selectedVariantId} with inventory count: ${inventoryQuantity}`);
 });
@@ -93,6 +94,7 @@ document.getElementById('timerForm').addEventListener('submit', (event) => {
     // Extract selected product and variant details
     const selectedProductTitle = productSelect.options[productSelect.selectedIndex].text;
     const selectedVariantId = variantSelect.value;
+    const selectedProductId = variantSelect.options[variantSelect.selectedIndex].getAttribute('data-product-id');    
     const inventoryQuantity = variantSelect.options[variantSelect.selectedIndex].getAttribute('data-inventory-quantity');
     const timerDuration = durationInput.value;
   
@@ -100,6 +102,7 @@ document.getElementById('timerForm').addEventListener('submit', (event) => {
     const row = document.createElement('tr');
     row.innerHTML = `
       <td>${selectedProductTitle}</td>
+      <td>${selectedProductId}</td>      
       <td>${selectedVariantId}</td>
       <td>${inventoryQuantity}</td>
       <td>${timerDuration} minutes</td>
@@ -114,7 +117,7 @@ document.getElementById('timerForm').addEventListener('submit', (event) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        productId: selectedVariantId.split(':')[0], // Assuming the format is 'productId:variantId'
+        productId:  selectedProductId,// Assuming the format is 'productId:variantId'
         variantId: selectedVariantId.split(':')[1],
         title: selectedProductTitle,
         inventoryCount: parseInt(inventoryQuantity),
