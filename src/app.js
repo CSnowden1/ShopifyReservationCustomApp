@@ -7,6 +7,7 @@ const cors = require('cors');
 const connectDB = require('./db/database');
 require('dotenv').config();
 const Shopify = require('shopify-api-node');
+const socketIo = require('socket.io'); 
 
 // Initialize Shopify API client
 const shopify = new Shopify({
