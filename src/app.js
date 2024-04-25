@@ -7,7 +7,6 @@ const cors = require('cors');
 const connectDB = require('./db/database');
 require('dotenv').config();
 const Shopify = require('shopify-api-node');
-const socketIo = require('socket.io'); 
 
 // Initialize Shopify API client
 const shopify = new Shopify({
@@ -46,13 +45,12 @@ app.use(morgan('dev'));
 // Set up WebSocket communication on the server
 
 const server = http.createServer(app);
-const io = socketIo(server);
 
 
 
 // Import routes
 const productRoutes = require('./routes/productRoutes');
-const cartUpdateRoutes = require('./routes/cartUpdateRoutes')(io); // Pass io instance to your routes
+const cartUpdateRoutes = require('./routes/cartUpdateRoutes')// Pass io instance to your routes
 const setupWebSocket = require('./services/websocket'); // Use the actual path to your websocket.js file
 
 
