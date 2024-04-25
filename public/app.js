@@ -103,7 +103,6 @@ document.getElementById('timerForm').addEventListener('submit', (event) => {
     row.innerHTML = `
       <td>${selectedProductTitle}</td>
       <td>${selectedProductId}</td>      
-      <td>${selectedVariantId}</td>
       <td>${inventoryQuantity}</td>
       <td>${timerDuration} minutes</td>
     `;
