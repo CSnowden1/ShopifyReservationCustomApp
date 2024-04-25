@@ -132,3 +132,39 @@ document.getElementById('timerForm').addEventListener('submit', (event) => {
       console.error('Error posting to server:', error);
     });
   });
+
+
+ 
+  document.addEventListener('DOMContentLoaded', async function() {
+    const productGrid = document.getElementById('productGrid');
+    
+    try {
+        const productResponse = await fetch('https://shopify-res-app-d429dd3eb80d.herokuapp.com/api/products/live-products', {
+            method: 'GET'
+        });
+
+        if (!productResponse.ok) {
+            throw new Error('Failed to fetch products');
+        }
+
+        const allProducts = await productResponse.json();
+        
+        // Clear any existing rows in the grid
+        productGrid.innerHTML = '';
+
+        // Create and append rows for each product
+        allProducts.forEach(product => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${product.title}</td>
+                <td>${product.productId}</td>
+                <td>${product.inventoryCount}</td>
+                <td>${product.reservationDuration} minutes</td>
+            `;
+            productGrid.appendChild(row);
+        });
+    } catch (error) {
+        console.error('Error fetching all products:', error);
+    }
+    
+});
