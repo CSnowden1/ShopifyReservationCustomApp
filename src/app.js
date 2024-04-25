@@ -7,7 +7,6 @@ const cors = require('cors');
 const connectDB = require('./db/database');
 require('dotenv').config();
 const Shopify = require('shopify-api-node');
-const connectDB = require('./db/database'); // Adjust the path as necessary
 
 
 // Initialize Shopify API client
