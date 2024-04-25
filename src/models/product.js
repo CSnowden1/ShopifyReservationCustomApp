@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
 
 const variantSchema = new mongoose.Schema({
+    productId: {
+            type: String,
+            required: true,
+            unique: true
+    },
   variantId: {
     type: String, // Variant ID from Shopify
     required: true,
