@@ -77,7 +77,6 @@ app.use((error, req, res, next) => {
 });
 // Connect to Database
 connectDB();
-db.products.dropIndex('variants.variantId_1');
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
