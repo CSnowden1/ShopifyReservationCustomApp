@@ -32,6 +32,11 @@ const productSchema = new mongoose.Schema({
     required: true,
     unique: true
   },
+  variantId: {
+    type: String, // Variant ID from Shopify
+    required: true,
+    unique: true
+  },
   title: {
     type: String,
     required: true

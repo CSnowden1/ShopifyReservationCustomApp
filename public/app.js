@@ -109,7 +109,7 @@ document.getElementById('timerForm').addEventListener('submit', (event) => {
     `;
   
     productGrid.appendChild(row);
-    console.log(selectedProductTitle, selectedProductId, selectedVariantId, inventoryQuantity)
+    console.log(selectedProductTitle, selectedProductId, selectedVariantId, inventoryQuantity, timerDuration);
     // Post to the server
     fetch('https://shopify-res-app-d429dd3eb80d.herokuapp.com/api/products/live-products', {
       method: 'POST',
