@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
         const products = await response.json();
         const productList = products.products;
+        console.log(productList);
 
         productSelect.innerHTML = '';
 
