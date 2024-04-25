@@ -93,7 +93,9 @@ document.getElementById('timerForm').addEventListener('submit', (event) => {
     const selectedProductTitle = productSelect.options[productSelect.selectedIndex].text;
     const selectedVariantId = variantSelect.value;
     const inventoryQuantity = variantSelect.options[variantSelect.selectedIndex].getAttribute('data-inventory-quantity');
+    console.log(inventoryQuantity)
     const timerDuration = durationInput.value;
+    console.log(timerDuration)
   
     // Append new row to the product grid
     const row = document.createElement('tr');
