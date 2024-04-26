@@ -164,6 +164,8 @@ document.getElementById('timerForm').addEventListener('submit', (event) => {
                 <td>${product.productId}</td>
                 <td>${product.liveQuantity}</td>
                 <td>${product.reservationDuration} minutes</td>
+                <td><button type="button" class="btn btn-primary edit-timer">Edit</button></td>
+                <td><button type="button" class="btn btn-danger delete-row">Delete</button></td>
             `;
             productGrid.appendChild(row);
         });
