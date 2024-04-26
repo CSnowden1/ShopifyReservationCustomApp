@@ -231,3 +231,56 @@ document.addEventListener('DOMContentLoaded', async function() {
       }
     });
   });
+
+  document.addEventListener('DOMContentLoaded', function () {
+    fetchCartSessions();
+
+    function fetchCartSessions() {
+        fetch('https://your-backend-url.com/api/cart-sessions')
+        .then(response => response.json())
+        .then(sessions => {
+            const tableBody = document.getElementById('sessionTable');
+            tableBody.innerHTML = ''; // Clear existing rows
+            sessions.forEach(session => {
+                const row = tableBody.insertRow();
+                row.innerHTML = `
+                    <td>${session.cartId}</td>
+                    <td>${session.title}</td>
+                    <td>${session.duration}</td>
+                    <td>${session.quantity}</td>
+                    <td><button class="btn btn-danger delete-btn" data-id="${session.cartId}">Delete</button></td>
+                `;
+                // Set a timeout to automatically delete the session after the duration
+                setTimeout(() => {
+                    deleteCartSession(session.cartId);
+                }, session.duration * 60000); // duration is expected to be in minutes
+            });
+            attachDeleteEventHandlers();
+        })
+        .catch(error => console.error('Error fetching cart sessions:', error));
+    }
+
+    function attachDeleteEventHandlers() {
+        document.querySelectorAll('.delete-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const cartId = this.getAttribute('data-id');
+                deleteCartSession(cartId);
+            });
+        });
+    }
+
+    function deleteCartSession(cartId) {
+        fetch(`https://your-backend-url.com/api/cart-sessions/${cartId}`, {
+            method: 'DELETE'
+        })
+        .then(response => {
+            if (response.ok) {
+                console.log(`Cart session ${cartId} deleted successfully`);
+                fetchCartSessions(); // Refresh the list after deletion
+            } else {
+                throw new Error(`Failed to delete cart session with ID ${cartId}`);
+            }
+        })
+        .catch(error => console.error(`Error deleting cart session with ID ${cartId}:`, error));
+    }
+});
