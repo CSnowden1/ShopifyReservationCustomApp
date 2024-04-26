@@ -185,6 +185,7 @@ document.addEventListener('DOMContentLoaded', async function() {
       // Check if the delete button was clicked
       if (event.target.classList.contains('delete-row')) {
         const row = event.target.closest('tr');
+        console.log(row);
         const secondChild = row.children[1]; // This is the second child element of the row
         const productId = secondChild.innerHTML;
         console.log(productId);
