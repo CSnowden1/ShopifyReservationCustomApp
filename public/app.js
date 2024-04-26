@@ -205,10 +205,8 @@ document.addEventListener('DOMContentLoaded', async function() {
       // Check if the edit button was clicked
       if (event.target.classList.contains('edit-timer')) {
         const row = event.target.closest('tr');
-        if (row && row.children.length > 1) {
-            const secondChild = row.children[1]; // This is the second child element of the row
-            // Do something with secondChild
-        }
+        console.log(row);
+        const secondChild = row.children[1]; // This is the second child element of the row
         const productId = secondChild.innerHTML;
         console.log(productId)
         const newDuration = prompt('Enter the new duration:', row.dataset.duration);
