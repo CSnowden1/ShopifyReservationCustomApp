@@ -185,8 +185,9 @@ document.addEventListener('DOMContentLoaded', async function() {
       // Check if the delete button was clicked
       if (event.target.classList.contains('delete-row')) {
         const row = event.target.closest('tr');
-        const productId = row.dataset.productId;
-  
+        const secondChild = row.children[1]; // This is the second child element of the row
+        const productId = secondChild.innerHTML;
+        console.log(productId);
         fetch(`https://shopify-res-app-d429dd3eb80d.herokuapp.com/api/products/live-products/${productId}`, {
           method: 'DELETE',
         })
@@ -203,7 +204,12 @@ document.addEventListener('DOMContentLoaded', async function() {
       // Check if the edit button was clicked
       if (event.target.classList.contains('edit-timer')) {
         const row = event.target.closest('tr');
-        const productId = row.dataset.productId;
+        if (row && row.children.length > 1) {
+            const secondChild = row.children[1]; // This is the second child element of the row
+            // Do something with secondChild
+        }
+        const productId = secondChild.innerHTML;
+        console.log(productId)
         const newDuration = prompt('Enter the new duration:', row.dataset.duration);
   
         if (newDuration) {
