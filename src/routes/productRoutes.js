@@ -159,6 +159,7 @@ router.delete('/products/live-products/:productId', async (req, res) => {
   router.put('/products/live-products/:productId', async (req, res) => {
     try {
       const { reservationDuration } = req.body;
+      console.log(reservationDuration);
       const updatedProduct = await Product.findOneAndUpdate(
         { productId: req.params.productId },
         { reservationDuration: reservationDuration },
