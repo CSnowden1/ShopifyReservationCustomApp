@@ -105,6 +105,10 @@ document.getElementById('timerForm').addEventListener('submit', (event) => {
       <td>${selectedProductId}</td>      
       <td>${inventoryQuantity}</td>
       <td>${timerDuration} minutes</td>
+      <td><button type="button" class="btn btn-primary edit-timer">Edit</button></td>
+      <td><button type="button" class="btn btn-danger delete-row">Delete</button></td>
+    
+
     `;
   
     productGrid.appendChild(row);
@@ -168,3 +172,55 @@ document.getElementById('timerForm').addEventListener('submit', (event) => {
     }
     
 });
+
+
+document.addEventListener('DOMContentLoaded', async function() {
+    // ... your existing code to fetch and populate the table ...
+  
+    const productGrid = document.getElementById('productGrid');
+  
+    productGrid.addEventListener('click', (event) => {
+      // Check if the delete button was clicked
+      if (event.target.classList.contains('delete-row')) {
+        const row = event.target.closest('tr');
+        const productId = row.dataset.productId;
+  
+        fetch(`https://shopify-res-app-d429dd3eb80d.herokuapp.com/api/products/live-products/${productId}`, {
+          method: 'DELETE',
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.log('Delete response:', data);
+          row.remove();
+        })
+        .catch(error => {
+          console.error('Error deleting product:', error);
+        });
+      }
+  
+      // Check if the edit button was clicked
+      if (event.target.classList.contains('edit-timer')) {
+        const row = event.target.closest('tr');
+        const productId = row.dataset.productId;
+        const newDuration = prompt('Enter the new duration:', row.dataset.duration);
+  
+        if (newDuration) {
+          fetch(`https://shopify-res-app-d429dd3eb80d.herokuapp.com/api/products/live-products/${productId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ reservationDuration: newDuration })
+          })
+          .then(response => response.json())
+          .then(updatedProduct => {
+            console.log('Update response:', updatedProduct);
+            // Update the duration in the DOM
+            row.querySelector('.timer-duration').textContent = `${newDuration} minutes`;
+            row.dataset.duration = newDuration; // Update the duration data attribute
+          })
+          .catch(error => {
+            console.error('Error updating product:', error);
+          });
+        }
+      }
+    });
+  });

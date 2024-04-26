@@ -139,4 +139,44 @@ router.get('/products/live-products', async (req, res) => {
     }
   });
 
+
+
+// DELETE route to remove a product by its productId
+router.delete('/products/live-products/:productId', async (req, res) => {
+    try {
+      const deletedProduct = await Product.findOneAndDelete({ productId: req.params.productId });
+      if (!deletedProduct) {
+        return res.status(404).json({ message: 'Product not found' });
+      }
+      res.status(200).json({ message: 'Product deleted successfully', product: deletedProduct });
+    } catch (error) {
+      console.error('Error deleting product:', error);
+      res.status(500).json({ message: 'Error deleting product', error: error });
+    }
+  });
+  
+  // PUT route to update a product's reservation duration by its productId
+  router.put('/products/live-products/:productId', async (req, res) => {
+    try {
+      const { reservationDuration } = req.body;
+      const updatedProduct = await Product.findOneAndUpdate(
+        { productId: req.params.productId },
+        { reservationDuration: reservationDuration },
+        { new: true } // Return the updated document
+      );
+      if (!updatedProduct) {
+        return res.status(404).json({ message: 'Product not found' });
+      }
+      res.status(200).json({ message: 'Product updated successfully', product: updatedProduct });
+    } catch (error) {
+      console.error('Error updating product:', error);
+      res.status(500).json({ message: 'Error updating product', error: error });
+    }
+  });
+
+  
+
+
+
+
 module.exports = router;
