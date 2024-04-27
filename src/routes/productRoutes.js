@@ -111,7 +111,7 @@ function getShopifyProductVariants(shopDomain, accessToken, productId, callback)
 
   router.post('/products/live-products', async (req, res) => {
     console.log(req)
-    const { title, reservationDuration, inventoryCount } = req.body;
+    const { title, productId, reservationDuration, inventoryCount } = req.body;
 
     try {
       // Check if the product already exists
