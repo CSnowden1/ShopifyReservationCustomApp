@@ -24,9 +24,6 @@ function verifyWebhook(data, hmacHeader) {
 }
 
 router.post('/carts-update', async (req, res) => {
-  if (!verifyWebhook(JSON.stringify(req.body), req.get('X-Shopify-Hmac-Sha256'))) {
-    return res.status(401).send('Webhook not verified');
-  }
 
   try {
     for (const item of req.body.line_items) {

@@ -162,7 +162,8 @@ router.delete('/products/live-products/:productId', async (req, res) => {
       res.status(500).json({ message: 'Error deleting product', error: error });
     }
   });
-  
+
+
   // PUT route to update a product's reservation duration by its productId
   router.put('/products/live-products/:productId', async (req, res) => {
     try {
@@ -183,7 +184,6 @@ router.delete('/products/live-products/:productId', async (req, res) => {
     }
   });
 
-  
 
 
 
