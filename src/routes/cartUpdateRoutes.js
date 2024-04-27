@@ -58,11 +58,8 @@ router.post('/carts-sessions', async (req, res) => {
         }
       }
   
-      if (sessionCreated) {
-        res.status(200).send('Webhook processed and session created');
-      } else {
-        res.status(200).send('Webhook processed but no session created');
-      }
+   
+    res.status(200).send('Webhook processed');
     } catch (error) {
       console.error('Error processing webhook:', error);
       res.status(500).send('An error occurred while processing the webhook');
