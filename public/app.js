@@ -280,6 +280,38 @@ document.addEventListener('DOMContentLoaded', async function() {
     });
   });
 
+
+  function createCountdownElement(minutes) {
+    // Create the countdown element
+    const countdownElement = document.createElement('div');
+    countdownElement.style.fontSize = '24px'; // Styling for visibility
+
+    let seconds = minutes * 60; // Convert minutes to seconds
+
+    const timerId = setInterval(() => {
+        const remainingMinutes = Math.floor(seconds / 60);
+        let remainingSeconds = seconds % 60;
+
+        if (remainingSeconds < 10) {
+            remainingSeconds = '0' + remainingSeconds; // add leading zero if seconds less than 10
+        }
+
+        countdownElement.textContent = `${remainingMinutes}:${remainingSeconds}`;
+        if (seconds < 60) {
+            countdownElement.style.color = 'red';
+        }
+
+        if (seconds === 0) {
+            clearInterval(timerId);
+            countdownElement.textContent = "Reservation Expired";
+        }
+        seconds--;
+    }, 1000);
+
+    return countdownElement;
+}
+
+
    document.addEventListener('DOMContentLoaded', function () {
     fetchCartSessions();
 
@@ -295,7 +327,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                     <td>${session.cartId}</td>
                     <td>${session.startTime}</td>
                     <td>${session.duration}</td>
-                    <td>${session.startTime}</td>
+                    <td>${createCountdownElement(session.duration)}</td>
                     <td>${session.quantity}</td>
                     <td>${session.isActive}</td>
                     <td><button class="btn btn-danger delete-btn" data-id="${session.cartId}">Delete</button></td>
