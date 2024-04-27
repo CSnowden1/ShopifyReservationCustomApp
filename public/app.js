@@ -199,7 +199,7 @@ document.getElementById('timerForm').addEventListener('submit', (event) => {
         }
 
         const allProducts = await productResponse.json();
-        console.log(allProducts);
+        console.log("This should be All Products", allProducts);
         
         // Clear any existing rows in the grid
         productGrid.innerHTML = '';
@@ -225,7 +225,6 @@ document.getElementById('timerForm').addEventListener('submit', (event) => {
 
 
 document.addEventListener('DOMContentLoaded', async function() {
-    // ... your existing code to fetch and populate the table ...
   
     const productGrid = document.getElementById('productGrid');
   
