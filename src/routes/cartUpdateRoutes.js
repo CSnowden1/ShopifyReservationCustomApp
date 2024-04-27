@@ -18,15 +18,14 @@ function shouldStartCheckoutSession(itemId) {
   // This should be dynamic based on your business logic
   return itemId === '45121949630715'; // Example item ID
 }
-
 router.post('/carts-sessions', async (req, res) => {
     try {
       console.log('Webhook Received:', req.body); 
-      console.log(req.body.line_items);
-      let sessionCreated = false; // Flag to check if session is created
+      console.log("First Line Item", req.body.line_items);
   
-      for (const item of req.body.line_items) {
-        if (!sessionCreated && shouldStartCheckoutSession(item.id)) {
+      const sessionCreated = await req.body.line_items.reduce(async (acc, item) => {
+        const isSessionCreated = await acc; // Wait for the previous promise to resolve
+        if (!isSessionCreated && shouldStartCheckoutSession(item.id)) {
           console.log('Checking Cart for item ID:', item.id);
           const product = await Product.findOne({ "variants.variantId": item.variant_id });
   
@@ -50,14 +49,14 @@ router.post('/carts-sessions', async (req, res) => {
   
               await newCartSession.save();
               console.log('Cart Session Saved for item ID:', item.id);
-              sessionCreated = true; // Set flag to true after creating session
-              break; // Stop processing as we only need one session per cart
+              return true; // Session created, return true to stop further processing
             } else {
               console.log(`Not enough inventory for variant ${item.variant_id}`);
             }
           }
         }
-      }
+        return isSessionCreated; // Carry forward the session created status
+      }, Promise.resolve(false)); // Start with a resolved promise that no session is created
   
       if (sessionCreated) {
         res.status(200).send('Webhook processed and session created');
@@ -69,7 +68,6 @@ router.post('/carts-sessions', async (req, res) => {
       res.status(500).send('An error occurred while processing the webhook');
     }
   });
-
 router.get('/list-webhooks', async (req, res) => {
   try {
     const webhooks = await shopify.webhook.list();
