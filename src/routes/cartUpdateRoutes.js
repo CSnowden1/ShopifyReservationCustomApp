@@ -39,8 +39,8 @@ router.post('/carts-sessions', async (req, res) => {
 
           if (product) {
             console.log('Found Session product:', product);
-            const variant = product.variants.find(v => v.variantId === cartItems[i].variant_id);
-            if (variant && item.quantity <= variant.inventoryCount) {
+            const variant = product.find(v => v.variantId === cartItems[i].variant_id);
+            if (variant && cartItems[i].quantity <= variant.inventoryCount) {
               const startTime = new Date();
               const endTime = new Date(startTime.getTime() + variant.reservationDuration * 60000);
   
