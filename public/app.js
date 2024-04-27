@@ -211,6 +211,7 @@ document.getElementById('timerForm').addEventListener('submit', (event) => {
             row.innerHTML = `
                 <td>${product.title}</td>
                 <td>${product.productId}</td>
+                <td>${product.variantId}</td>
                 <td>${product.liveQuantity}</td>
                 <td>${product.reservationDuration} minutes</td>
                 <td><button type="button" class="btn btn-primary edit-timer">Edit</button></td>
