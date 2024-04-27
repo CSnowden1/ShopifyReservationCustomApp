@@ -24,16 +24,19 @@ function verifyWebhook(data, hmacHeader) {
 }
 
 router.post('/cart-sessions', async (req, res) => {
+    console.log('Cart session started')
 
   try {
     for (const item of req.body.line_items) {
       const product = await Product.findOne({ "variants.variantId": item.variant_id });
+      console.log('Creating new cart session for customer');
       if (product) {
         const variant = product.variants.find(v => v.variantId === item.variant_id);
         if (variant && item.quantity <= variant.inventoryCount) {
           const duration = variant.reservationDuration;
           const startTime = new Date();
           const endTime = new Date(startTime.getTime() + duration * 60000);
+          console.log('Creating new cart session for customer')
 
           const newCartSession = new CartSession({
             cartId: req.body.token,
