@@ -4,7 +4,8 @@ const https = require('https');
 const Product = require('../models/product'); 
 
 
-function getShopifyProducts(shopDomain, accessToken, apiPath, products = [], callback) {
+// Function to make a GET request to Shopify API and handle pagination
+function fetchAllShopifyProducts(shopDomain, accessToken, apiPath, accumulatedProducts = [], callback) {
     const options = {
         hostname: shopDomain,
         path: apiPath,
@@ -15,88 +16,48 @@ function getShopifyProducts(shopDomain, accessToken, apiPath, products = [], cal
         }
     };
 
-    const req = https.request(options, res => {
-        let data = '';
-
-        res.on('data', chunk => {
-            data += chunk;
-        });
-
+    https.get(options, res => {
+        let rawData = '';
+        res.on('data', chunk => rawData += chunk);
         res.on('end', () => {
-            const response = JSON.parse(data);
-            products = products.concat(response.products);
-
-            // Check for pagination in the response headers
-            const linkHeader = res.headers.link;
-            if (linkHeader) {
-                const matches = linkHeader.match(/<(https:\/\/[^>]+)>;\srel="next"/);
-                if (matches && matches[1]) {
-                    // Recursively fetch next page
-                    const nextPath = new URL(matches[1]).pathname + new URL(matches[1]).search;
-                    getShopifyProducts(shopDomain, accessToken, nextPath, products, callback);
+            try {
+                const parsedData = JSON.parse(rawData);
+                const products = accumulatedProducts.concat(parsedData.products);
+                const linkHeader = res.headers.link;
+                if (linkHeader) {
+                    const matches = linkHeader.match(/<(https:\/\/[^>]+)>;\srel="next"/);
+                    if (matches && matches[1]) {
+                        const nextPath = new URL(matches[1]).pathname + new URL(matches[1]).search;
+                        fetchAllShopifyProducts(shopDomain, accessToken, nextPath, products, callback);
+                    } else {
+                        callback(null, products);
+                    }
                 } else {
-                    // No more pages, return all products
                     callback(null, products);
                 }
-            } else {
-                callback(null, products);
+            } catch (e) {
+                callback(e, null);
             }
         });
-    });
-
-    req.on('error', e => {
+    }).on('error', (e) => {
         callback(e, null);
     });
-
-    req.end();
 }
 
-// Function to make a GET request to Shopify API
-function getShopifyProducts(shopDomain, accessToken, apiPath, callback) {
-  const options = {
-    hostname: shopDomain,
-    path: apiPath,
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Shopify-Access-Token': accessToken
-    }
-  };
-
-  const req = https.request(options, res => {
-    let data = '';
-
-    res.on('data', chunk => {
-      data += chunk;
-    });
-
-    res.on('end', () => {
-      callback(null, JSON.parse(data));
-    });
-  });
-
-  req.on('error', e => {
-    callback(e, null);
-  });
-
-  req.end();
-}
-
-// Route handler to get products
+// Route to fetch all products from Shopify
 router.get('/products', (req, res) => {
-  const shopDomain = process.env.SHOPIFY_STORE_DOMAIN;
-  const accessToken = process.env.SHOPIFY_ADMIN_ACCESS_TOKEN; 
-  const apiPath = '/admin/api/2024-04/products.json';
+    const shopDomain = process.env.SHOPIFY_STORE_DOMAIN;
+    const accessToken = process.env.SHOPIFY_ADMIN_ACCESS_TOKEN;
+    const initialPath = '/admin/api/2024-04/products.json?limit=250'; // Increase limit to max (250) to reduce the number of requests
 
-  getShopifyProducts(shopDomain, accessToken, apiPath, (error, products) => {
-    if (error) {
-      console.error(error);
-      return res.status(500).json({ error: 'Failed to fetch products' });
-    }
-    res.json(products);
-  });
+    fetchAllShopifyProducts(shopDomain, accessToken, initialPath, [], (error, products) => {
+        if (error) {
+            console.error('Error fetching products:', error);
+            return res.status(500).json({ error: 'Failed to fetch products' });
+        }
+        res.json({ products });
+    });
 });
-
 
 
 function getShopifyProductVariants(shopDomain, accessToken, productId, callback) {
