@@ -80,7 +80,7 @@ router.get('/list-webhooks', async (req, res) => {
   } catch (error) {
     console.error('Error fetching webhooks:', error);
     res.status(500).json({ error: error.message });
-  }
+
 });
 
 router.get('/cart-sessions', async (req, res) => {

@@ -293,9 +293,11 @@ document.addEventListener('DOMContentLoaded', async function() {
                 const row = tableBody.insertRow();
                 row.innerHTML = `
                     <td>${session.cartId}</td>
-                    <td>${session.title}</td>
+                    <td>${session.startTime}</td>
                     <td>${session.duration}</td>
+                    <td>${session.startTime}</td>
                     <td>${session.quantity}</td>
+                    <td>${session.isActive}</td>
                     <td><button class="btn btn-danger delete-btn" data-id="${session.cartId}">Delete</button></td>
                 `;
                 // Set a timeout to automatically delete the session after the duration
