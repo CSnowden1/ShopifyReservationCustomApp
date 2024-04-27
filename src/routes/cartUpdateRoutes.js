@@ -52,7 +52,7 @@ router.post('/carts-sessions', async (req, res) => {
                 quantity: cartItems[i].quantity,
                 startTime,
                 endTime,
-                reservationDuration: product.reservationDuration
+                duration: product.reservationDuration
               });
   
               await newCartSession.save();
