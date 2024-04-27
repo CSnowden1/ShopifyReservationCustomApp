@@ -7,78 +7,56 @@ const CartSession = require('../models/cartSession');
 
 // Initialize Shopify API node with credentials
 const shopify = new Shopify({
-    shopName: process.env.SHOPIFY_STORE_DOMAIN,
-    apiKey: process.env.SHOPIFY_API_KEY,
-    password: process.env.SHOPIFY_ADMIN_ACCESS_TOKEN
-  });
-  
-  const webhookUrl = 'https://shopify-res-app-d429dd3eb80d.herokuapp.com/webhooks/cart-sessions';
-  
-  router.use(bodyParser.json());
-  
-  function shouldStartCheckoutSession(itemId) {
-    // Logic to decide if a session should start
-    return itemId === '45121949630715'; // Example item ID
-  }
-  
-  // Webhook creation wrapped in an async function to handle promise
-  async function setupWebhook() {
-    try {
-      const webhook = await shopify.webhook.create({
-        topic: 'carts/update',
-        address: webhookUrl,
-        format: 'json'
-      });
-      console.log('Webhook created:', webhook);
-    } catch (err) {
-      console.error('Error creating webhook:', err);
-    }
-  }
-  
-  // Call setupWebhook on server start
-  setupWebhook();
-  
-  // Route to handle incoming webhook data
-  router.post('/webhooks/cart-sessions', async (req, res) => {
-    try {
-      console.log('Webhook Received:', req.body);
-      for (const item of req.body.line_items) {
-        if (shouldStartCheckoutSession(item.variant_id)) {
-          const product = await Product.findOne({ "variants.variantId": item.variant_id });
-  
-          if (product) {
-            const variant = product.variants.find(v => v.variantId === item.variant_id);
-            if (variant && item.quantity <= variant.inventoryCount) {
-              const startTime = new Date();
-              const endTime = new Date(startTime.getTime() + variant.reservationDuration * 60000);
-  
-              const newCartSession = new CartSession({
-                cartId: req.body.token,
-                productId: item.product_id,
-                variantId: item.variant_id,
-                title: item.title,
-                quantity: item.quantity,
-                startTime,
-                endTime,
-                reservationDuration: variant.reservationDuration
-              });
-  
-              const savedCartSession = await newCartSession.save();
-              console.log('Cart Session Saved:', savedCartSession);
-            } else {
-              console.log(`Not enough inventory for variant ${item.variant_id}`);
-            }
+  shopName: process.env.SHOPIFY_STORE_DOMAIN,
+  apiKey: process.env.SHOPIFY_API_KEY,
+  password: process.env.SHOPIFY_ADMIN_ACCESS_TOKEN
+});
+
+router.use(bodyParser.json());
+
+function shouldStartCheckoutSession(itemId) {
+  // This should be dynamic based on your business logic
+  return itemId === '45121949630715'; // Example item ID
+}
+
+router.post('/carts-sessions', async (req, res) => {
+  try {
+    console.log('Webhook Received:', req.body); 
+    for (const item of req.body.line_items) {
+      if (shouldStartCheckoutSession(item.variant_id)) {
+        const product = await Product.findOne({ "variants.variantId": item.variant_id });
+
+        if (product) {
+          const variant = product.variants.find(v => v.variantId === item.variant_id);
+          if (variant && item.quantity <= variant.inventoryCount) {
+            const startTime = new Date();
+            const endTime = new Date(startTime.getTime() + variant.reservationDuration * 60000);
+
+            const newCartSession = new CartSession({
+              cartId: req.body.token,
+              productId: item.product_id,
+              variantId: item.variant_id,
+              title: item.title,
+              quantity: item.quantity,
+              startTime,
+              endTime,
+              reservationDuration: variant.reservationDuration
+            });
+
+            const savedCartSession = await newCartSession.save();
+            console.log('Cart Session Saved:', savedCartSession);
+          } else {
+            console.log(`Not enough inventory for variant ${item.variant_id}`);
           }
         }
       }
-      res.status(200).send('Webhook processed');
-    } catch (error) {
-      console.error('Error processing webhook:', error);
-      res.status(500).send('An error occurred while processing the webhook');
     }
-  });
-
-
+    res.status(200).send('Webhook processed');
+  } catch (error) {
+    console.error('Error processing webhook:', error);
+    res.status(500).send('An error occurred while processing the webhook');
+  }
+});
 
 router.get('/list-webhooks', async (req, res) => {
   try {
@@ -91,14 +69,12 @@ router.get('/list-webhooks', async (req, res) => {
 });
 
 router.get('/cart-sessions', async (req, res) => {
-    try {
-        const webhooks = await shopify.webhook.list(); // Using shopify-api-node to list webhooks
-        console.log('Fetched webhooks:', webhooks);
-        res.status(200).json(webhooks);
-    } catch (error) {
-        console.error('Error fetching webhooks:', error);
-        res.status(500).json({ message: 'Failed to fetch webhooks', error: error.message });
-    }
+  try {
+    res.status(200).json(sessions);
+  } catch (error) {
+    console.error('Error retrieving cart sessions:', error);
+    res.status(500).json({ message: 'Error retrieving cart sessions', error: error });
+  }
 });
 
 router.delete('/cart-sessions/:cartId', async (req, res) => {
