@@ -70,7 +70,8 @@ router.get('/list-webhooks', async (req, res) => {
 
 router.get('/cart-sessions', async (req, res) => {
   try {
-    res.status(200).json(res);
+    console.log(res);
+    res.status(200);
   } catch (error) {
     console.error('Error retrieving cart sessions:', error);
     res.status(500).json({ message: 'Error retrieving cart sessions', error: error });
