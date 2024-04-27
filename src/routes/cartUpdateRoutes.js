@@ -26,9 +26,11 @@ router.post('/carts-sessions', async (req, res) => {
       let cartItems = req.body.line_items;
   
       for (var i = 0; i < cartItems.length; i++) {
+        console.log('Cart Item Length, ', cartItems.length);
+        console.log('Starting Cart Loop with, ', cartItems)
         if (shouldStartCheckoutSession(cartItems[i].id)) {
-          console.log('Checking Cart for item ID:', item.id);
-          const product = await Product.findOne({ "variants.variantId": item.variant_id });
+          console.log('Checking Cart for item ID:', cartItems[i].id);
+          const product = await Product.findOne({ "variants.variantId": cartItems[i].id});
 
           if (product) {
             console.log('Found Session product:', product);
