@@ -3,7 +3,6 @@ const router = express.Router();
 const https = require('https');
 const Product = require('../models/product'); 
 
-const https = require('https');
 
 function getShopifyProducts(shopDomain, accessToken, apiPath, products = [], callback) {
     const options = {
