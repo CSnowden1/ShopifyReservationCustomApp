@@ -17,7 +17,7 @@ const shopify = new Shopify({
 });
 
 // Replace 'your-deployment-url.com' with your actual Heroku app's URL.
-const webhookUrl = 'https://shopify-res-app-d429dd3eb80d.herokuapp.com/webhooks/carts-sessions';
+const webhookUrl = 'https://shopify-res-app-d429dd3eb80d.herokuapp.com/webhooks/';
 
 // Create a webhook for carts update
 shopify.webhook.create({

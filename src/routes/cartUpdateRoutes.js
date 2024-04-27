@@ -24,11 +24,15 @@ router.post('/carts-sessions', async (req, res) => {
     console.log('Webhook Received:', req.body); 
     for (const item of req.body.line_items) {
       if (shouldStartCheckoutSession(item.variant_id)) {
+        console.log('Checking Cart')
         const product = await Product.findOne({ "variants.variantId": item.variant_id });
 
         if (product) {
+            console.log('Found Session product:', product);
+            console.log('Looking for Var ID');
           const variant = product.variants.find(v => v.variantId === item.variant_id);
           if (variant && item.quantity <= variant.inventoryCount) {
+
             const startTime = new Date();
             const endTime = new Date(startTime.getTime() + variant.reservationDuration * 60000);
 
@@ -70,7 +74,6 @@ router.get('/list-webhooks', async (req, res) => {
 
 router.get('/cart-sessions', async (req, res) => {
   try {
-    console.log(res);
     res.status(200);
   } catch (error) {
     console.error('Error retrieving cart sessions:', error);
