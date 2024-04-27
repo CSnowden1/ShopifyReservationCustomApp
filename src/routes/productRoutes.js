@@ -148,6 +148,7 @@ router.get('/products/live-products', async (req, res) => {
     try {
       const products = await Product.find(); // This will find all products
       res.status(200).json(products);
+      console.log(products);
     } catch (error) {
       console.error('Error retrieving products:', error);
       res.status(500).json({ message: 'Error retrieving products', error: error });
