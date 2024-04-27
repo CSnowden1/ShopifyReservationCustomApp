@@ -158,14 +158,14 @@ function getShopifyProductVariants(shopDomain, accessToken, productId, callback)
 
 router.get('/products/live-products', async (req, res) => {
     try {
-      const products = await Product.find(); // This will find all products
+      const products = await Product.find(); // Fetch all documents from the products collection
+      console.log("Retrieved products:", products); // Log products to console for debugging
       res.status(200).json(products);
-      console.log(products);
     } catch (error) {
-      console.error('Error retrieving products:', error);
-      res.status(500).json({ message: 'Error retrieving products', error: error });
+      console.error('Error retrieving live products:', error); // Detailed error logging
+      res.status(500).json({ message: 'Error retrieving products', error: error.toString() });
     }
-  });
+});
 
 
 
@@ -185,7 +185,7 @@ router.delete('/products/live-products/:productId', async (req, res) => {
   
 
 
-  
+
   // PUT route to update a product's reservation duration by its productId
   router.put('/products/live-products/:productId', async (req, res) => {
     try {
