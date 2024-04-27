@@ -36,9 +36,10 @@ router.post('/carts-sessions', async (req, res) => {
         if (!shouldStartCheckoutSession(cartItems[i].id)) {
           console.log('Checking Cart for item ID:', cartItems[i].id);
           const product = await Product.findOne({ variantId: cartItems[i].id});
-
           if (product) {
             console.log('Found Session product:', product);
+            console.log('Cart Quantity:', cartItems[i].quantity);
+            console.log('Live Stock:', product.liveQuantity);
             if (cartItems[i].quantity <= product.liveQuantity) {
               const startTime = new Date();
               const endTime = new Date(startTime.getTime() + variant.reservationDuration * 60000);
