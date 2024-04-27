@@ -77,6 +77,9 @@ const shopify = new Shopify({
       res.status(500).send('An error occurred while processing the webhook');
     }
   });
+
+
+
 router.get('/list-webhooks', async (req, res) => {
   try {
     const webhooks = await shopify.webhook.list();
@@ -88,13 +91,14 @@ router.get('/list-webhooks', async (req, res) => {
 });
 
 router.get('/cart-sessions', async (req, res) => {
-  try {
-    const sessions = await CartSession.find();
-    res.status(200).json(sessions);
-  } catch (error) {
-    console.error('Error retrieving cart sessions:', error);
-    res.status(500).json({ message: 'Error retrieving cart sessions', error: error });
-  }
+    try {
+        const webhooks = await shopify.webhook.list(); // Using shopify-api-node to list webhooks
+        console.log('Fetched webhooks:', webhooks);
+        res.status(200).json(webhooks);
+    } catch (error) {
+        console.error('Error fetching webhooks:', error);
+        res.status(500).json({ message: 'Failed to fetch webhooks', error: error.message });
+    }
 });
 
 router.delete('/cart-sessions/:cartId', async (req, res) => {
