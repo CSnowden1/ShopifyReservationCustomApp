@@ -30,9 +30,9 @@ router.post('/carts-sessions', async (req, res) => {
         console.log('Starting Cart Loop with, ', cartItems)
         console.log('Working Item', cartItems[0]);
         console.log('Item Id', cartItems[0].id);
-        if (shouldStartCheckoutSession(cartItems[i].id)) {
-          console.log('Checking Cart for item ID:', cartItems[i].id);
-          const product = await Product.findOne({ "variants.variantId": cartItems[i].id});
+        if (shouldStartCheckoutSession(cartItems[0].id)) {
+          console.log('Checking Cart for item ID:', cartItems[0].id);
+          const product = await Product.findOne({ "variants.variantId": cartItems[0].id});
 
           if (product) {
             console.log('Found Session product:', product);
