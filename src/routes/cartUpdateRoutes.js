@@ -19,7 +19,7 @@ function shouldStartCheckoutSession(itemId) {
   return itemId === '45121949630715'; // Example item ID
 }
 
-router.post('/carts-update', async (req, res) => {
+router.post('/cart-sessions', async (req, res) => {
   try {
     console.log('Webhook Received:', req.body); 
     for (const item of req.body.line_items) {

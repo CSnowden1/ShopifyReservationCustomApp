@@ -283,7 +283,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     fetchCartSessions();
 
     function fetchCartSessions() {
-        fetch('https://shopify-res-app-d429dd3eb80d.herokuapp.com/webhooks/cart-session')
+        fetch('https://shopify-res-app-d429dd3eb80d.herokuapp.com/webhooks/cart-sessions')
         .then(response => response.json())
         .then(sessions => {
             const tableBody = document.getElementById('sessionTable');
