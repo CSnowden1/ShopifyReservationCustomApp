@@ -41,6 +41,8 @@ router.post('/carts-sessions', async (req, res) => {
             console.log('Cart Quantity:', cartItems[i].quantity);
             console.log('Live Stock:', product.liveQuantity);
             if (cartItems[i].quantity <= product.liveQuantity) {
+                product.liveQuantity -= cartItems[i].quantity;
+                await product.save();
               const startTime = new Date();
               const endTime = new Date(startTime.getTime() + product.reservationDuration * 60000);
   
