@@ -110,6 +110,7 @@ function getShopifyProductVariants(shopDomain, accessToken, productId, callback)
 
 
   router.post('/products/live-products', async (req, res) => {
+    console.log(req)
     const { title, reservationDuration, inventoryCount } = req.body;
 
     try {
