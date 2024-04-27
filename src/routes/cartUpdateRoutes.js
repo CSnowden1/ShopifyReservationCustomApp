@@ -95,6 +95,20 @@ router.get('/cart-sessions', async (req, res) => {
       }
 });
 
+router.get('/cart-sessions/:cartId', async (req, res) => {
+    try {
+        const cartSession = await CartSession.findOne({cartId : req.cartId}); // This will find all products
+        res.status(200).json(cartSession);
+      } catch (error) {
+        console.error('Error retrieving products:', error);
+        res.status(500).json({ message: 'Error retrieving products', error: error });
+      }
+});
+
+
+
+
+
 router.delete('/cart-sessions/:cartId', async (req, res) => {
   try {
     const deletedSession = await CartSession.findOneAndDelete({ cartId: req.params.cartId });
