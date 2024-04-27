@@ -28,6 +28,8 @@ router.post('/carts-sessions', async (req, res) => {
       for (var i = 0; i < cartItems.length; i++) {
         console.log('Cart Item Length, ', cartItems.length);
         console.log('Starting Cart Loop with, ', cartItems)
+        console.log('Working Item', cartItems[0]);
+        console.log('Item Id', cartItems[0].id);
         if (shouldStartCheckoutSession(cartItems[i].id)) {
           console.log('Checking Cart for item ID:', cartItems[i].id);
           const product = await Product.findOne({ "variants.variantId": cartItems[i].id});
