@@ -142,7 +142,7 @@ router.get('/cart-sessions', async (req, res) => {
 
 router.get('/cart-sessions/:cartId', async (req, res) => {
     try {
-        const cartSession = await CartSession.findOne({cartId : req.cartId}); // This will find all products
+        const cartSession = await CartSession.findOne({cartId : req.params.cartId}); // This will find all products
         res.status(200).json(cartSession);
       } catch (error) {
         console.error('Error retrieving products:', error);
