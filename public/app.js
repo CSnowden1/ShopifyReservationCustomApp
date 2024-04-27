@@ -323,19 +323,24 @@ document.addEventListener('DOMContentLoaded', async function() {
             tableBody.innerHTML = ''; // Clear existing rows
             sessions.forEach(session => {
                 const row = tableBody.insertRow();
-                row.innerHTML = `
-                    <td>${session.cartId}</td>
-                    <td>${session.startTime}</td>
-                    <td>${session.duration}</td>
-                    <td>${createCountdownElement(session.duration)}</td>
-                    <td>${session.quantity}</td>
-                    <td>${session.isActive}</td>
-                    <td><button class="btn btn-danger delete-btn" data-id="${session.cartId}">Delete</button></td>
-                `;
-                // Set a timeout to automatically delete the session after the duration
-                setTimeout(() => {
-                    deleteCartSession(session.cartId);
-                }, session.duration * 60000); // duration is expected to be in minutes
+                row.insertCell(0).textContent = session.cartId;
+                row.insertCell(1).textContent = new Date(session.startTime).toLocaleString();
+                row.insertCell(2).textContent = `${session.duration} minutes`;
+    
+                // Create countdown element and append it to the new cell
+                const countdownCell = row.insertCell(3);
+                countdownCell.appendChild(createCountdownElement(session.duration));
+    
+                row.insertCell(4).textContent = session.quantity;
+                row.insertCell(5).textContent = session.isActive ? 'Active' : 'Inactive';
+    
+                // Delete button cell
+                const deleteCell = row.insertCell(6);
+                const deleteButton = document.createElement('button');
+                deleteButton.className = 'btn btn-danger delete-btn';
+                deleteButton.textContent = 'Delete';
+                deleteButton.setAttribute('data-id', session.cartId);
+                deleteCell.appendChild(deleteButton);
             });
             attachDeleteEventHandlers();
         })
