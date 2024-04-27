@@ -51,6 +51,8 @@ function getShopifyProducts(shopDomain, accessToken, apiPath, products = [], cal
 }
 
 
+
+
 // Route handler to get products
 router.get('/products', (req, res) => {
     const shopDomain = process.env.SHOPIFY_STORE_DOMAIN;
@@ -65,6 +67,9 @@ router.get('/products', (req, res) => {
         res.json({ products });
     });
 });
+
+
+
 
 
 function getShopifyProductVariants(shopDomain, accessToken, productId, callback) {
@@ -99,6 +104,10 @@ function getShopifyProductVariants(shopDomain, accessToken, productId, callback)
     req.end();
   }
   
+
+
+
+
   // Route handler to get variants for a specific product
   router.get('/products/:productId', (req, res) => {
     const shopDomain = process.env.SHOPIFY_STORE_DOMAIN;
@@ -114,6 +123,9 @@ function getShopifyProductVariants(shopDomain, accessToken, productId, callback)
       res.json(variants);
     });
   });
+
+
+
 
 
 
@@ -170,6 +182,9 @@ router.delete('/products/live-products/:productId', async (req, res) => {
       res.status(500).json({ message: 'Error deleting product', error: error });
     }
   });
+  
+
+
   
   // PUT route to update a product's reservation duration by its productId
   router.put('/products/live-products/:productId', async (req, res) => {
