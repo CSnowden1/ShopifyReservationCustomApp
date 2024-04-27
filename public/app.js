@@ -199,6 +199,7 @@ document.getElementById('timerForm').addEventListener('submit', (event) => {
         }
 
         const allProducts = await productResponse.json();
+        console.log(allProducts);
         
         // Clear any existing rows in the grid
         productGrid.innerHTML = '';
