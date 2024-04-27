@@ -84,12 +84,13 @@ router.get('/list-webhooks', async (req, res) => {
 });
 
 router.get('/cart-sessions', async (req, res) => {
-  try {
-    res.status(200);
-  } catch (error) {
-    console.error('Error retrieving cart sessions:', error);
-    res.status(500).json({ message: 'Error retrieving cart sessions', error: error });
-  }
+    try {
+        const cartSession = await CartSession.find(); // This will find all products
+        res.status(200).json(cartSession);
+      } catch (error) {
+        console.error('Error retrieving products:', error);
+        res.status(500).json({ message: 'Error retrieving products', error: error });
+      }
 });
 
 router.delete('/cart-sessions/:cartId', async (req, res) => {
