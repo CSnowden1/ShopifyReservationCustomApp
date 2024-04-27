@@ -281,32 +281,45 @@ document.addEventListener('DOMContentLoaded', async function() {
   });
 
 
-  function createCountdownElement(minutes) {
-    // Create the countdown element
+ 
+
+  function createCountdownElement(endTime) {
     const countdownElement = document.createElement('div');
     countdownElement.style.fontSize = '24px'; // Styling for visibility
 
-    let seconds = minutes * 60; // Convert minutes to seconds
+    // Parse the endTime into a Date object
+    const endTimeDate = new Date(endTime);
 
-    const timerId = setInterval(() => {
+    const updateCountdown = () => {
+        const now = new Date();
+        const difference = endTimeDate - now; // Difference in milliseconds
+        const seconds = Math.floor(difference / 1000);
+
+        if (seconds <= 0) {
+            clearInterval(timerId);
+            countdownElement.textContent = "Reservation Expired";
+            countdownElement.style.color = 'black';
+            return;
+        }
+
         const remainingMinutes = Math.floor(seconds / 60);
         let remainingSeconds = seconds % 60;
 
         if (remainingSeconds < 10) {
-            remainingSeconds = '0' + remainingSeconds; // add leading zero if seconds less than 10
+            remainingSeconds = '0' + remainingSeconds; // Add leading zero if seconds less than 10
         }
 
         countdownElement.textContent = `${remainingMinutes}:${remainingSeconds}`;
-        if (seconds < 60) {
+        if (seconds < 60) { // Less than 60 seconds remaining
             countdownElement.style.color = 'red';
+        } else {
+            countdownElement.style.color = 'black'; // Reset to normal color if more than a minute left
         }
+    };
 
-        if (seconds === 0) {
-            clearInterval(timerId);
-            countdownElement.textContent = "Reservation Expired";
-        }
-        seconds--;
-    }, 1000);
+    // Update immediately and then set an interval to update every second
+    updateCountdown();
+    const timerId = setInterval(updateCountdown, 1000);
 
     return countdownElement;
 }
@@ -325,17 +338,18 @@ document.addEventListener('DOMContentLoaded', async function() {
                 const row = tableBody.insertRow();
                 row.insertCell(0).textContent = session.cartId;
                 row.insertCell(1).textContent = new Date(session.startTime).toLocaleString();
-                row.insertCell(2).textContent = `${session.duration} minutes`;
+                row.insertCell(2).textContent = new Date(session.endTime).toLocaleString();
+                row.insertCell(3).textContent = `${session.duration} minutes`;
     
                 // Create countdown element and append it to the new cell
                 const countdownCell = row.insertCell(3);
                 countdownCell.appendChild(createCountdownElement(session.duration));
     
-                row.insertCell(4).textContent = session.quantity;
-                row.insertCell(5).textContent = session.isActive ? 'Active' : 'Inactive';
+                row.insertCell(5).textContent = session.quantity;
+                row.insertCell(6).textContent = session.isActive ? 'Active' : 'Inactive';
     
                 // Delete button cell
-                const deleteCell = row.insertCell(6);
+                const deleteCell = row.insertCell(7);
                 const deleteButton = document.createElement('button');
                 deleteButton.className = 'btn btn-danger delete-btn';
                 deleteButton.textContent = 'Delete';

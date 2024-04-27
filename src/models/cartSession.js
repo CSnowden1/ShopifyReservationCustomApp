@@ -11,6 +11,11 @@ const cartSessionSchema = new mongoose.Schema({
     required: true,
     default: Date.now,
   },
+  endTime: {
+    type: Date,
+    required: true,
+    default: Date.now,
+  },
   duration: {
     type: Number,
     required: true,
