@@ -279,12 +279,11 @@ document.addEventListener('DOMContentLoaded', async function() {
     });
   });
 
-   /************************************************************************************************
    document.addEventListener('DOMContentLoaded', function () {
     fetchCartSessions();
 
     function fetchCartSessions() {
-        fetch('https://your-backend-url.com/api/cart-sessions')
+        fetch('https://shopify-res-app-d429dd3eb80d.herokuapp.com/webhooks/cart-session')
         .then(response => response.json())
         .then(sessions => {
             const tableBody = document.getElementById('sessionTable');
@@ -318,13 +317,13 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 
     function deleteCartSession(cartId) {
-        fetch(`https://your-backend-url.com/api/cart-sessions/${cartId}`, {
+        fetch(`https://shopify-res-app-d429dd3eb80d.herokuapp.com/webhooks/cart-sessions/${cartId}`, {
             method: 'DELETE'
         })
         .then(response => {
             if (response.ok) {
                 console.log(`Cart session ${cartId} deleted successfully`);
-                fetchCartSessions(); // Refresh the list after deletion
+                fetchCartSessions(); 
             } else {
                 throw new Error(`Failed to delete cart session with ID ${cartId}`);
             }
@@ -332,5 +331,3 @@ document.addEventListener('DOMContentLoaded', async function() {
         .catch(error => console.error(`Error deleting cart session with ID ${cartId}:`, error));
     }
 });
-
-*/

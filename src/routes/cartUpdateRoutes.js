@@ -23,7 +23,7 @@ function verifyWebhook(data, hmacHeader) {
   return crypto.timingSafeEqual(Buffer.from(generatedHash), Buffer.from(hmacHeader));
 }
 
-router.post('/carts-update', async (req, res) => {
+router.post('/cart-sessions', async (req, res) => {
 
   try {
     for (const item of req.body.line_items) {
@@ -97,7 +97,6 @@ router.delete('/cart-sessions/:cartId', async (req, res) => {
         res.status(500).json({ message: 'Error deleting cart session', error: error });
     }
 });
-
 
 
 
