@@ -50,7 +50,6 @@ router.post('/carts-sessions', async (req, res) => {
   
               await newCartSession.save();
               console.log('Cart Session Saved for item ID:', item.id);
-              sessionCreated = true; // Set flag to true after creating session
               break; // Stop processing as we only need one session per cart
             } else {
               console.log(`Not enough inventory for variant ${item.variant_id}`);
