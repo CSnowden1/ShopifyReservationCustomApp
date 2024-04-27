@@ -6,6 +6,11 @@ const productSchema = new mongoose.Schema({
     required: true,
     unique: true
   },
+  variantId: {
+    type: String, // Product ID from Shopify
+    required: true,
+    unique: true
+  },
   title: {
     type: String,
     required: true
