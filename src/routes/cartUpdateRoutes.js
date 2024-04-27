@@ -35,21 +35,21 @@ router.post('/carts-sessions', async (req, res) => {
         console.log('Item Id', cartItems[i].id);
         if (!shouldStartCheckoutSession(cartItems[i].id)) {
           console.log('Checking Cart for item ID:', cartItems[i].id);
-          const product = await Product.findOne({ "variants.variantId": cartItems[i].id});
+          const product = await Product.findOne({ variantId: cartItems[i].id});
 
           if (product) {
             console.log('Found Session product:', product);
-            const variant = product.variants.find(v => v.variantId === item.variant_id);
+            const variant = product.variants.find(v => v.variantId === cartItems[i].variant_id);
             if (variant && item.quantity <= variant.inventoryCount) {
               const startTime = new Date();
               const endTime = new Date(startTime.getTime() + variant.reservationDuration * 60000);
   
               const newCartSession = new CartSession({
                 cartId: req.body.token,
-                productId: item.product_id,
-                variantId: item.variant_id,
-                title: item.title,
-                quantity: item.quantity,
+                productId: cartItems[i].product_id,
+                variantId: cartItems[i].variant_id,
+                title: cartItems[i].title,
+                quantity: cartItems[i].quantity,
                 startTime,
                 endTime,
                 reservationDuration: variant.reservationDuration
