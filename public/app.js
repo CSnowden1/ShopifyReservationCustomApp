@@ -1,8 +1,10 @@
 document.addEventListener('DOMContentLoaded', async function() {
     const productSelect = document.getElementById('productSelect');
     const variantSelect = document.getElementById('variantSelect');
+    const loadingIndicator = document.getElementById('loadingIndicator'); // Assume an element to show loading status
 
     try {
+        loadingIndicator.textContent = 'Loading products...';
         const response = await fetch('https://shopify-res-app-d429dd3eb80d.herokuapp.com/api/products', {
             method: 'GET'
         });
@@ -15,7 +17,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         const productList = products.products;
         console.log(productList);
 
-        productSelect.innerHTML = '';
+        productSelect.innerHTML = '<option value="">Select a product</option>';
 
         // Populate the product dropdown
         productList.forEach(product => {
@@ -24,13 +26,57 @@ document.addEventListener('DOMContentLoaded', async function() {
             option.textContent = product.title;
             productSelect.appendChild(option);
         });
+        loadingIndicator.textContent = ''; // Clear loading text
     } catch (error) {
         console.error('Error fetching products:', error);
+        loadingIndicator.textContent = 'Failed to load products';
     }
 
     productSelect.addEventListener('change', async (event) => {
         const selectedProductId = event.target.value;
-        console.log(`Selected product ID: ${selectedProductId}`);
+        if (!selectedProductId) return; // Prevent fetching if the default "Select" option is chosen
+
+        variantSelect.innerHTML = '';
+        loadingIndicator.textContent = 'Loading variants...';
+
+        try {
+            const response = await fetch(`https://shopify-res-app-d429dd3eb80d.herokuapp.com/api/products/${selectedProductId}/variants`, {
+                method: 'GET'
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch variants');
+            }
+
+            const variantData = await response.json();
+            const variants = variantData.variants;
+            if (!variants || variants.length === 0) {
+                throw new Error('No variants found for this product');
+            }
+
+            // Populate the variants dropdown
+            variants.forEach(variant => {
+                const option = document.createElement('option');
+                option.value = variant.id;
+                option.textContent = variant.title;
+                option.setAttribute('data-inventory-quantity', variant.inventory_quantity);
+                option.setAttribute('data-product-id', selectedProductId);
+                variantSelect.appendChild(option);
+            });
+            loadingIndicator.textContent = ''; // Clear loading text
+        } catch (error) {
+            console.error('Error fetching variants:', error);
+            loadingIndicator.textContent = 'Failed to load variants';
+        }
+    });
+
+    variantSelect.addEventListener('change', (event) => {
+        const selectedVariantId = event.target.value;
+        const selectedVariantOption = event.target.options[event.target.selectedIndex];
+        const inventoryQuantity = selectedVariantOption.getAttribute('data-inventory-quantity');
+        const productId = selectedVariantOption.getAttribute('data-product-id');
+        
+        console.log(`Selected variant ID: ${selectedVariantId} with inventory count: ${inventoryQuantity}`);
     });
 });
 
