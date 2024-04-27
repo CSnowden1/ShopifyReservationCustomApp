@@ -280,7 +280,8 @@ document.addEventListener('DOMContentLoaded', async function() {
     });
   });
 
-  document.addEventListener('DOMContentLoaded', function () {
+   /************************************************************************************************
+   document.addEventListener('DOMContentLoaded', function () {
     fetchCartSessions();
 
     function fetchCartSessions() {
@@ -332,3 +333,5 @@ document.addEventListener('DOMContentLoaded', async function() {
         .catch(error => console.error(`Error deleting cart session with ID ${cartId}:`, error));
     }
 });
+
+*/
