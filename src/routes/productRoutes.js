@@ -3,54 +3,68 @@ const router = express.Router();
 const https = require('https');
 const Product = require('../models/product'); 
 
+function getShopifyProducts(shopDomain, accessToken, apiPath, products = [], callback) {
+    const options = {
+        hostname: shopDomain,
+        path: apiPath,
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Shopify-Access-Token': accessToken
+        }
+    };
 
+    const req = https.request(options, res => {
+        let data = '';
 
-// Function to make a GET request to Shopify API
-function getShopifyProducts(shopDomain, accessToken, apiPath, callback) {
-  const options = {
-    hostname: shopDomain,
-    path: apiPath,
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Shopify-Access-Token': accessToken
-    }
-  };
+        res.on('data', chunk => {
+            data += chunk;
+        });
 
-  const req = https.request(options, res => {
-    let data = '';
+        res.on('end', () => {
+            const response = JSON.parse(data);
+            products = products.concat(response.products);
 
-    res.on('data', chunk => {
-      data += chunk;
+            // Check for pagination in the response headers
+            const linkHeader = res.headers.link;
+            if (linkHeader) {
+                const matches = linkHeader.match(/<(https:\/\/[^>]+)>;\srel="next"/);
+                if (matches && matches[1]) {
+                    // Recursively fetch next page
+                    const nextPath = new URL(matches[1]).pathname + new URL(matches[1]).search;
+                    getShopifyProducts(shopDomain, accessToken, nextPath, products, callback);
+                } else {
+                    // No more pages, return all products
+                    callback(null, products);
+                }
+            } else {
+                callback(null, products);
+            }
+        });
     });
 
-    res.on('end', () => {
-      callback(null, JSON.parse(data));
+    req.on('error', e => {
+        callback(e, null);
     });
-  });
 
-  req.on('error', e => {
-    callback(e, null);
-  });
-
-  req.end();
+    req.end();
 }
+
 
 // Route handler to get products
 router.get('/products', (req, res) => {
-  const shopDomain = process.env.SHOPIFY_STORE_DOMAIN;
-  const accessToken = process.env.SHOPIFY_ADMIN_ACCESS_TOKEN; 
-  const apiPath = '/admin/api/2024-04/products.json';
+    const shopDomain = process.env.SHOPIFY_STORE_DOMAIN;
+    const accessToken = process.env.SHOPIFY_ADMIN_ACCESS_TOKEN;
+    const apiPath = '/admin/api/2024-04/products.json';
 
-  getShopifyProducts(shopDomain, accessToken, apiPath, (error, products) => {
-    if (error) {
-      console.error(error);
-      return res.status(500).json({ error: 'Failed to fetch products' });
-    }
-    res.json(products);
-  });
+    getShopifyProducts(shopDomain, accessToken, apiPath, [], (error, products) => {
+        if (error) {
+            console.error('Error fetching products:', error);
+            return res.status(500).json({ error: 'Failed to fetch products' });
+        }
+        res.json({ products });
+    });
 });
-
 
 
 function getShopifyProductVariants(shopDomain, accessToken, productId, callback) {
