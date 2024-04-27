@@ -21,59 +21,104 @@ function shouldStartCheckoutSession(itemId) {
   } 
 }
 
+
+router.put('/carts-sessions/:token', async (req, res) => { 
+    try {
+        console.log(req.body.token)
+        const updatedCartSession = await CartSession.findOneAndUpdate(
+            { token: req.body.token },
+            { quantity: req.body.quantity }, // Return the updated document
+          );
+          if (!updatedCartSession) {
+            return res.status(404).json({ message: 'Cart Session not found' });
+          }
+          res.status(200).json({ message: 'Cart data updated successfully', cartSession: updatedCartSession })
+        } catch (error) {
+            console.error('Error updating product:', error);
+            res.status(500).json({ message: 'Error updating product', error: error });
+          }
+})
+
+
+
 router.post('/carts-sessions', async (req, res) => {
     try {
-      console.log('Webhook Received:', req.body); 
-      console.log("First Line Item", req.body.line_items);
-      let cartItems = req.body.line_items;
-  
-      for (var i = 0; i < cartItems.length; i++) {
-        console.log('Cart Item Length, ', cartItems.length);
-        console.log('Starting Cart Loop with, ', cartItems)
-        console.log('Working Item', cartItems[0]);
-        console.log('Item Id', cartItems[0].id);
-        console.log('Item Id', cartItems[i].id);
-        if (!shouldStartCheckoutSession(cartItems[i].id)) {
-          console.log('Checking Cart for item ID:', cartItems[i].id);
-          const product = await Product.findOne({ variantId: cartItems[i].id});
-          if (product) {
-            console.log('Found Session product:', product);
-            console.log('Cart Quantity:', cartItems[i].quantity);
-            console.log('Live Stock:', product.liveQuantity);
-            if (cartItems[i].quantity <= product.liveQuantity) {
-                product.liveQuantity -= cartItems[i].quantity;
-                await product.save();
-              const startTime = new Date();
-              const endTime = new Date(startTime.getTime() + product.reservationDuration * 60000);
-  
-              const newCartSession = new CartSession({
-                cartId: req.body.token,
-                productId: cartItems[i].product_id,
-                variantId: cartItems[i].variant_id,
-                title: cartItems[i].title,
-                quantity: cartItems[i].quantity,
-                startTime,
-                endTime,
-                duration: product.reservationDuration
-              });
-  
-              await newCartSession.save();
-              console.log('Cart Session Saved for item ID:', product.id);
-              break; // Stop processing as we only need one session per cart
-            } else {
-              console.log(`Not enough inventory for variant ${product.id}`);
+        console.log('Webhook Received:', req.body); 
+        const existingSession = await CartSession.findOne({ cartId: req.body.token });
+
+        if (existingSession) {
+            console.log('Session already exists, updating...');
+            let updateNeeded = false; // Flag to track if we need to update
+
+            // Check each line item to find a valid product and update session
+            for (let item of req.body.line_items) {
+                if (shouldStartCheckoutSession(item.id)) {
+                    const product = await Product.findOne({ "variants.variantId": item.variant_id });
+                    if (product && item.quantity <= product.liveQuantity) {
+                        // Update the existing session with new information
+                        existingSession.productId = item.product_id;
+                        existingSession.variantId = item.variant_id;
+                        existingSession.title = item.title;
+                        existingSession.quantity = item.quantity;
+                        existingSession.startTime = new Date();
+                        existingSession.endTime = new Date(existingSession.startTime.getTime() + product.reservationDuration * 60000);
+                        existingSession.reservationDuration = product.reservationDuration;
+
+                        product.liveQuantity -= item.quantity; // Update inventory
+                        await product.save();
+
+                        updateNeeded = true; // Set flag indicating that update is needed
+                        break; // Assuming only one session update is needed per cart
+                    }
+                }
             }
-          }
+
+            if (updateNeeded) {
+                await existingSession.save();
+                console.log('Cart Session Updated:', existingSession);
+                res.status(200).send('Session updated successfully');
+            } else {
+                console.log('No updates made to the session.');
+                res.status(200).send('No updates required for the session');
+            }
+            return;
         }
-      }
-  
-   
-    res.status(200).send('Webhook processed');
+
+        // If no existing session, proceed to create a new session
+        console.log("No existing session, creating a new one.");
+        for (let item of req.body.line_items) {
+            if (shouldStartCheckoutSession(item.id)) {
+                const product = await Product.findOne({ "variants.variantId": item.variant_id });
+                if (product && item.quantity <= product.liveQuantity) {
+                    const startTime = new Date();
+                    const endTime = new Date(startTime.getTime() + product.reservationDuration * 60000);
+
+                    const newCartSession = new CartSession({
+                        cartId: req.body.token,
+                        productId: item.product_id,
+                        variantId: item.variant_id,
+                        title: item.title,
+                        quantity: item.quantity,
+                        startTime,
+                        endTime,
+                        reservationDuration: product.reservationDuration
+                    });
+
+                    await newCartSession.save();
+                    console.log('New Cart Session Saved:', newCartSession);
+                    break; // Only one session per cart is needed
+                } else {
+                    console.log(`Not enough inventory for variant ${item.variant_id}`);
+                }
+            }
+        }
+        res.status(200).send('Webhook processed');
     } catch (error) {
-      console.error('Error processing webhook:', error);
-      res.status(500).send('An error occurred while processing the webhook');
+        console.error('Error processing webhook:', error);
+        res.status(500).send('An error occurred while processing the webhook');
     }
-  });
+});
+
 
 router.get('/list-webhooks', async (req, res) => {
   try {
