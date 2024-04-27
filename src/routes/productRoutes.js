@@ -129,35 +129,14 @@ function getShopifyProductVariants(shopDomain, accessToken, productId, callback)
 
 
 
-  router.post('/products/live-products', async (req, res) => {
-    console.log("Received data for new product:", req.body);
-    const { productId, title, reservationDuration, inventoryCount } = req.body;
-    
-    try {
-      const existingProduct = await Product.findOne({ productId });
-      if (existingProduct) {
-        return res.status(409).send({ message: 'Product already exists.' });
-      }
 
-      const product = new Product({
-        productId,
-        title,
-        reservationDuration,
-        liveQuantity: inventoryCount
-      });
-
-      const savedProduct = await product.save();
-      res.status(201).json(savedProduct);
-    } catch (error) {
-      console.error('Error saving product:', error);
-      res.status(500).json({ error: 'Error saving product', details: error });
-    }
-});
 
 router.get('/products/live-products', async (req, res) => {
+    console.log("Route Activated");
     try {
-      const products = await Product.find(); // Fetch all documents from the products collection
-      console.log("Retrieved products:", products); // Log products to console for debugging
+        console.log('Fetching live products')
+      const products = await Product.find(); 
+      console.log("Retrieved products:", products); 
       res.status(200).json(products);
     } catch (error) {
       console.error('Error retrieving live products:', error); // Detailed error logging
