@@ -100,10 +100,11 @@ function getShopifyProductVariants(shopDomain, accessToken, productId, callback)
   }
   
   // Route handler to get variants for a specific product
-  router.get('/products/:productId/variants', (req, res) => {
+  router.get('/products/:productId', (req, res) => {
     const shopDomain = process.env.SHOPIFY_STORE_DOMAIN;
     const accessToken = process.env.SHOPIFY_ADMIN_ACCESS_TOKEN; 
-    const productId = req.params.productId; // Get the product ID from the request parameters
+    const productId = req.params.productId;
+
   
     getShopifyProductVariants(shopDomain, accessToken, productId, (error, variants) => {
       if (error) {

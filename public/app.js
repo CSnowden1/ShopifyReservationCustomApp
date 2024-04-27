@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         loadingIndicator.textContent = 'Loading variants...';
 
         try {
-            const response = await fetch(`https://shopify-res-app-d429dd3eb80d.herokuapp.com/api/products/${selectedProductId}/variants`, {
+            const response = await fetch(`https://shopify-res-app-d429dd3eb80d.herokuapp.com/api/products/${selectedProductId}`, {
                 method: 'GET'
             });
 
@@ -49,6 +49,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             }
 
             const variantData = await response.json();
+            console.log(variantData)
             const variants = variantData.variants;
             if (!variants || variants.length === 0) {
                 throw new Error('No variants found for this product');
