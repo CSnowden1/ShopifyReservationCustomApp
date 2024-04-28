@@ -90,7 +90,7 @@ router.post('/cart-sessions', async (req, res) => {
         for (let i = 0; i < req.body.line_items.length; i++) {
             let item = req.body.line_items[i];
             if (shouldStartCheckoutSession(item.id)) {
-                const product = await Product.findOne({ "variants.variantId": item.variant_id });
+                const product = await Product.findOne({ variantId: item.id });
                 if (product && item.quantity <= product.liveQuantity) {
                     const startTime = new Date();
                     const endTime = new Date(startTime.getTime() + product.reservationDuration * 60000);
@@ -108,7 +108,7 @@ router.post('/cart-sessions', async (req, res) => {
 
                     await newCartSession.save();
                     console.log('New Cart Session Saved:', newCartSession);
-                    break; // Only one session per cart is needed
+                    break; 
                 } else {
                     console.log(`Not enough inventory for variant ${item.variant_id}`);
                 }
