@@ -184,7 +184,7 @@ router.delete('/cart-sessions/:cartId', async (req, res) => {
 
 
 
-app.post('/orders', async (req, res) => {
+router.post('/orders', async (req, res) => {
     const orderData = req.body; // Assuming the request body contains the order data
     
     // Check if the order is created after the checkout process is completed
@@ -223,7 +223,7 @@ app.post('/orders', async (req, res) => {
 });
 
 
-app.get('/orders/:cart_token', async (req, res) => {
+router.get('/orders/:cart_token', async (req, res) => {
     const cartToken = req.params.cart_token;
 
     try {
