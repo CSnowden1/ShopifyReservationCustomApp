@@ -33,6 +33,6 @@ const orderSchema = new mongoose.Schema({
   ],
 });
 
-const Order = mongoose.model('CartSession', orderSchema);
+const Order = mongoose.model('CompletedOrder', orderSchema);
 
 module.exports = Order;
