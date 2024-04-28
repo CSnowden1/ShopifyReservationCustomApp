@@ -20,7 +20,7 @@ async function shouldStartCheckoutSession(itemId) {
         const products = await Product.find({}).select('variantId -_id');
         console.log(products);
         const variantIds = products.flatMap(product => product.variants.map(variant => variant.variantId));
-        console.log(variantIds);
+        console.log("These are the ids", variantIds);
         return variantIds.includes(itemId);
     } catch (error) {
         console.error('Error fetching variant IDs:', error);
