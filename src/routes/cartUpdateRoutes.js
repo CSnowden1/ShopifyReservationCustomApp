@@ -14,12 +14,20 @@ const shopify = new Shopify({
 
 router.use(bodyParser.json());
 
-function shouldStartCheckoutSession(itemId) {
-  // This should be dynamic based on your business logic
-  if(itemId === '45121949630715') {
-    return true;
-  } 
+async function shouldStartCheckoutSession(itemId) {
+    try {
+        // Fetch all products with their variants
+        const products = await Product.find({}).select('variants.variantId -_id');
+        // Flatten the list of variant IDs
+        const variantIds = products.flatMap(product => product.variants.map(variant => variant.variantId));
+        // Check if the provided itemId is in the list of variant IDs
+        return variantIds.includes(itemId);
+    } catch (error) {
+        console.error('Error fetching variant IDs:', error);
+        return false; // Safely return false in case of an error
+    }
 }
+
 
 
 router.put('/carts-sessions/:token', async (req, res) => { 
