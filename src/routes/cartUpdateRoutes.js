@@ -17,10 +17,10 @@ router.use(bodyParser.json());
 async function shouldStartCheckoutSession(itemId) {
     try {
         // Fetch all products with their variants
-        const products = await Product.find({}).select('variants.variantId -_id');
-        // Flatten the list of variant IDs
+        const products = await Product.find({}).select('variantId -_id');
+        console.log(products);
         const variantIds = products.flatMap(product => product.variants.map(variant => variant.variantId));
-        // Check if the provided itemId is in the list of variant IDs
+        console.log(variantIds);
         return variantIds.includes(itemId);
     } catch (error) {
         console.error('Error fetching variant IDs:', error);
@@ -101,6 +101,7 @@ router.post('/cart-sessions', async (req, res) => {
             if (shouldStartCheckoutSession(item.id)) {
                 console.log("Looking for product", item.id);
                 const product = await Product.findOne({ variantId: item.id });
+
                 if (product && item.quantity <= product.liveQuantity) {
                     console.log("Found product", product);
                     const startTime = new Date();
