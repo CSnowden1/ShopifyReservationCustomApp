@@ -16,10 +16,9 @@ router.use(bodyParser.json());
 
 async function shouldStartCheckoutSession(itemId) {
     try {
-        // Fetch all products with their variants
         const products = await Product.find({}).select('variantId -_id');
         console.log(products);
-        const variantIds = products.flatMap(product => product.variants.map(variant => variant.variantId));
+        const variantIds = products.flatMap(product => product.map(variant => variant.variantId));
         console.log("These are the ids", variantIds);
         return variantIds.includes(itemId);
     } catch (error) {
