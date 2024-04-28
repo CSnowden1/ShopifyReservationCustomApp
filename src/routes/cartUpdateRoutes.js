@@ -22,7 +22,7 @@ async function shouldStartCheckoutSession(itemId) {
         console.log("These are the ids", variantIds);
         return variantIds.includes(itemId);
     } catch (error) {
-        console.error('Error fetching variant IDs:', error);
+        console.error('Error fetching variant IDs:', error);  
         return false; // Safely return false in case of an error
     }
 }
