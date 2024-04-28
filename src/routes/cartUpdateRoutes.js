@@ -62,7 +62,7 @@ router.post('/cart-sessions', async (req, res) => {
             for (let i = 0; i < req.body.line_items.length; i++) {
                 let item = req.body.line_items[i];
                 if (shouldStartCheckoutSession(item.id)) {
-                    const product = await Product.findOne({ "variants.variantId": item.variant_id });
+                    const product = await Product.findOne({ variantId: item.variant_id });
                     if (product && item.quantity <= product.liveQuantity) {
                         // Update the existing session with new information
                         existingSession.productId = item.product_id;
