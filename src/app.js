@@ -7,6 +7,8 @@ const cors = require('cors');
 const connectDB = require('./db/database');
 require('dotenv').config();
 const Shopify = require('shopify-api-node');
+const backgroundTasks = require('./db/cartSessionMonitor');
+
 
 
 // Initialize Shopify API client
@@ -27,6 +29,19 @@ shopify.webhook.create({
 }).then(
     (webhook) => console.log('Webhook created:', webhook),
     (err) => console.error('Error creating webhook:', err)
+);
+
+
+const webhookOrderUrl = 'https://shopify-res-app-d429dd3eb80d.herokuapp.com/webhooks/orders';
+
+
+shopify.webhook.create({
+    topic: 'orders/create',
+    address: webhookOrderUrl,
+    format: 'json'
+}).then(
+    (webhook) => console.log('Completed orders webhook created:', webhook),
+    (err) => console.error('Error creating completed orders webhook:', err)
 );
 
 
@@ -77,6 +92,7 @@ app.use((error, req, res, next) => {
 });
 // Connect to Database
 connectDB();
+backgroundTasks.startMonitoring();
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
