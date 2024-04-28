@@ -89,9 +89,12 @@ router.post('/cart-sessions', async (req, res) => {
         console.log("No existing session, creating a new one.");
         for (let i = 0; i < req.body.line_items.length; i++) {
             let item = req.body.line_items[i];
+            console.log("Looping through", item);
             if (shouldStartCheckoutSession(item.id)) {
+                console.log("Looking for product", item.id);
                 const product = await Product.findOne({ variantId: item.id });
                 if (product && item.quantity <= product.liveQuantity) {
+                    console.log("Found product", product);
                     const startTime = new Date();
                     const endTime = new Date(startTime.getTime() + product.reservationDuration * 60000);
 
