@@ -69,9 +69,6 @@ router.post('/cart-sessions', async (req, res) => {
                         existingSession.variantId = item.variant_id;
                         existingSession.title = item.title;
                         existingSession.quantity = item.quantity;
-                        existingSession.startTime = new Date();
-                        existingSession.endTime = new Date(existingSession.startTime.getTime() + product.reservationDuration * 60000);
-                        existingSession.reservationDuration = product.reservationDuration;
 
                         product.liveQuantity -= item.quantity; // Update inventory
                         await product.save();
