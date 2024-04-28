@@ -110,11 +110,11 @@ router.post('/cart-sessions', async (req, res) => {
                         cartId: req.body.token,
                         productId: item.product_id,
                         variantId: item.variant_id,
+                        duration: product.reservationDuration,
                         title: item.title,
                         quantity: item.quantity,
                         startTime,
                         endTime,
-                        reservationDuration: product.reservationDuration
                     });
 
                     await newCartSession.save();
