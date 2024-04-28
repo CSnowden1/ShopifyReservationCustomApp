@@ -43,15 +43,16 @@ router.put('/carts-sessions/:token', async (req, res) => {
 
 router.post('/cart-sessions', async (req, res) => {
     try {
-        console.log('Webhook Received:', req.body); 
+        console.log('Webhook Received:', req.body);
         const existingSession = await CartSession.findOne({ cartId: req.body.token });
 
         if (existingSession) {
             console.log('Session already exists, updating...');
             let updateNeeded = false; // Flag to track if we need to update
 
-            // Check each line item to find a valid product and update session
-            for (let item of req.body.line_items) {
+            // Iterate over line items to find a valid product and update session
+            for (let i = 0; i < req.body.line_items.length; i++) {
+                let item = req.body.line_items[i];
                 if (shouldStartCheckoutSession(item.id)) {
                     const product = await Product.findOne({ "variants.variantId": item.variant_id });
                     if (product && item.quantity <= product.liveQuantity) {
@@ -86,7 +87,8 @@ router.post('/cart-sessions', async (req, res) => {
 
         // If no existing session, proceed to create a new session
         console.log("No existing session, creating a new one.");
-        for (let item of req.body.line_items) {
+        for (let i = 0; i < req.body.line_items.length; i++) {
+            let item = req.body.line_items[i];
             if (shouldStartCheckoutSession(item.id)) {
                 const product = await Product.findOne({ "variants.variantId": item.variant_id });
                 if (product && item.quantity <= product.liveQuantity) {
@@ -118,6 +120,7 @@ router.post('/cart-sessions', async (req, res) => {
         res.status(500).send('An error occurred while processing the webhook');
     }
 });
+
 
 
 router.get('/list-webhooks', async (req, res) => {
