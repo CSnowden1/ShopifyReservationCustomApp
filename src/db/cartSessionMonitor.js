@@ -2,10 +2,6 @@ const CartSession = require('./models/CartSession');
 const Product = require('./models/Product');
 const mongoose = require('mongoose');
 
-// Create a TTL index on the endTime field of the CartSession collection
-const CartSession = require('./cartSessionModel');
-const Product = require('./productModel');
-const mongoose = require('mongoose');
 
 // Create a TTL index on the endTime field of the CartSession collection
 CartSession.collection.createIndex({ endTime: 1 }, { expireAfterSeconds: 0 });
