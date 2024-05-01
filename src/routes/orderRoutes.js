@@ -19,15 +19,12 @@ router.use(bodyParser.json());
 router.post('/orders', async (req, res) => {
     try {
         // Extract relevant fields from the request body
-        const { id, admin_graphql_api_id, name, total_price, customer } = req.body;
+        const { cart_id, cart_token, admin_graphql_api_id, name, total_price, customer } = req.body;
 
         // Create a new Order instance
         const newOrder = new Order({
-            orderId: id,
-            adminGraphqlApiId: admin_graphql_api_id,
-            name: name,
-            totalPrice: total_price,
-            customer: customer
+            cart_token: cart_token,
+            cart_id : cart_id
         });
 
         // Save the new order to the database
