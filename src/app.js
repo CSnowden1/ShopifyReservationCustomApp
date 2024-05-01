@@ -81,6 +81,7 @@ app.get('/', (req, res) => {
 
 app.use('/api', productRoutes);
 app.use('/webhooks', cartUpdateRoutes);
+app.use('webhooks', orderUpdateRoutes);
 
 // Catch-all for unmatched routes
 app.use((req, res) => {
