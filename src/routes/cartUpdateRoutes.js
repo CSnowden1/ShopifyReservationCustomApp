@@ -180,43 +180,10 @@ router.delete('/cart-sessions/:cartId', async (req, res) => {
 });
 
 
-
-router.post('/orders', async (req, res) => {
-    const orderData = req.body; // Assuming the request body contains the order data
-    
-    // Check if the order is created after the checkout process is completed
-    if (orderData && orderData.attributes && orderData.attributes.cart_token) {
-        try {
-            // Create a new Order document using the MongoDB model
-            const newOrder = new Order({
-                cartId: orderData.attributes.cart_token,
-                startTime: new Date(),
-                endTime: new Date(),
-                duration: orderData.duration, // Assuming order duration is provided in the request
-                quantity: orderData.quantity, // Assuming order quantity is provided in the request
-                products: orderData.products // Assuming product information is provided in the request
-            });
-
-            // Save the new order to the database
-            await newOrder.save();
-
-            // Log the successful creation of the order
-            console.log('Order saved:', newOrder);
-
-            // Respond with a success status
-            res.status(200).send('Order received and saved');
-        } catch (error) {
-            // Log any errors that occur during the database operation
-            console.error('Error saving order:', error);
-            // Respond with an error status
-            res.status(500).send('Error saving order');
-        }
-    } else {
-        // If the order does not contain a cart token, it might not be related to a completed checkout process
-        console.log('Invalid order payload');
-        // Respond with an error status
-        res.status(400).send('Invalid order payload');
-    }
+router.post('/orders', (req, res) => {
+  console.log("Using route")
+  console.log('Received order webhook:', req.body);
+  res.status(200).send('Webhook data received');
 });
 
 
