@@ -1,8 +1,13 @@
 const mongoose = require('mongoose');
 
 const orderSchema = new mongoose.Schema({
-  cartId: {
+  cart_token: {
     type: String,
+    required: true,
+    unique: true, 
+  },
+  checkout_id: {
+    type: Number,
     required: true,
     unique: true, 
   },
@@ -18,11 +23,11 @@ const orderSchema = new mongoose.Schema({
   },
   duration: {
     type: Number,
-    required: true,
+    required: false,
   },
   quantity: {
     type: Number,
-    required: true,
+    required: false,
   },
   products: [
     {
