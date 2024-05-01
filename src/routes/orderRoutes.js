@@ -16,7 +16,7 @@ const shopify = new Shopify({
 router.use(bodyParser.json());
 
 router.post('/orders', async (req, res) => {
-    const orderData = req.body; // Assuming the request body contains the order data
+    const orderData = req.body;
     console.log('Order Data', orderData);
     // Check if the order is created after the checkout process is completed
     if (orderData && orderData.attributes && orderData.attributes.cart_token) {

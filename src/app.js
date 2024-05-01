@@ -32,17 +32,6 @@ shopify.webhook.create({
 );
 
 
-const webhookOrderUrl = 'https://shopify-res-app-d429dd3eb80d.herokuapp.com/webhooks/orders';
-
-
-shopify.webhook.create({
-    topic: 'orders/create',
-    address: webhookOrderUrl,
-    format: 'json'
-}).then(
-    (webhook) => console.log('Completed orders webhook created:', webhook),
-    (err) => console.error('Error creating completed orders webhook:', err)
-);
 
 
 
