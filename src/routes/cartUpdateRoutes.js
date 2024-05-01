@@ -180,11 +180,6 @@ router.delete('/cart-sessions/:cartId', async (req, res) => {
 });
 
 
-router.post('/orders', (req, res) => {
-  console.log("Using route")
-  console.log('Received order webhook:', req.body);
-  res.status(200).send('Webhook data received');
-});
 
 
 router.get('/orders/:cart_token', async (req, res) => {
