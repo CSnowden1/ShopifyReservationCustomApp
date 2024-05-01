@@ -67,6 +67,8 @@ const server = http.createServer(app);
 // Import routes
 const productRoutes = require('./routes/productRoutes');
 const cartUpdateRoutes = require('./routes/cartUpdateRoutes')// Pass io instance to your routes
+const orderUpdateRoutes = require('./routes/orderRoutes')
+
 
 
 // Serve static files
