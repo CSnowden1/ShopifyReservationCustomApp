@@ -9,7 +9,6 @@ CartSession.collection.createIndex({ endTime: 1 }, { expireAfterSeconds: 0 });
 // Background process to monitor expired cart sessions
 const monitorExpiredSessions = async () => {
     try {
-        // Find and iterate over all expired cart sessions
         const expiredSessions = await CartSession.find({ endTime: { $lt: new Date() } });
         for (const session of expiredSessions) {
             // Update product quantity based on the expired cart session

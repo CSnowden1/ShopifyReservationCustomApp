@@ -64,6 +64,8 @@ const server = http.createServer(app);
 const productRoutes = require('./routes/productRoutes');
 const cartUpdateRoutes = require('./routes/cartUpdateRoutes')// Pass io instance to your routes
 const orderUpdateRoutes = require('./routes/orderRoutes')
+const quantityUpdateRoutes = require('./routes/quantityRoute')
+
 
 
 
@@ -76,6 +78,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api', productRoutes);
+app.use('/api', quantityUpdateRoutes);
 app.use('/webhooks', cartUpdateRoutes);
 app.use('/webhooks', orderUpdateRoutes);
 
