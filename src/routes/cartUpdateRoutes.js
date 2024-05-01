@@ -244,30 +244,6 @@ function updateProductQuantity(variantId, quantity) {
 
 
 
-  router.post('/orders', async (req, res) => {
-    try {
-        // Extract relevant fields from the request body
-        const { cart_id, cart_token } = req.body;
-        console.log("Body Fetch", req.body);
-        console.log(req.body.cart_id)
-        console.log(req.body.cart_token)
-
-        // Create a new Order instance
-        const newOrder = new Order({
-            cart_token: cart_token,
-            cart_id : cart_id
-        });
-
-        // Save the new order to the database
-        const savedOrder = await newOrder.save();
-
-        console.log('Order saved successfully:', savedOrder);
-        res.status(200).send('Order saved successfully');
-    } catch (error) {
-        console.error('Error saving order:', error);
-        res.status(500).send('Error saving order');
-    }
-});
 
 
 router.get('/orders', async (req, res) => {
