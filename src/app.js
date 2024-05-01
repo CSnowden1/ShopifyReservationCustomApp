@@ -34,7 +34,7 @@ shopify.webhook.create({
 
 shopify.webhook.create({
   topic: 'orders/create',  // This can be 'orders/paid' depending on when you want to capture the order.
-  address: 'https://shopify-res-app-d429dd3eb80d.herokuapp.com/webhooks/orders',
+  address: 'https://shopify-res-app-d429dd3eb80d.herokuapp.com/webhooks/',
   format: 'json'
 }).then(
   (webhook) => console.log('Order webhook created:', webhook),

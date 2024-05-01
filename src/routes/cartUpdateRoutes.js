@@ -51,7 +51,7 @@ router.put('/carts-sessions/:token', async (req, res) => {
 
 router.post('/cart-sessions', async (req, res) => {
     try {
-        console.log('Webhook Received:', req.body);
+        console.log('Webhook Received(Testing route):', req.body);
         const existingSession = await CartSession.findOne({ cartId: req.body.token });
 
         if (existingSession) {
