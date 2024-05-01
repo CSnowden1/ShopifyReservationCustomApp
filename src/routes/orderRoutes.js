@@ -15,10 +15,9 @@ const shopify = new Shopify({
 
 router.use(bodyParser.json());
 
-
 router.post('/orders', async (req, res) => {
     const orderData = req.body; // Assuming the request body contains the order data
-    console.log('Order Data', orderData)
+    console.log('Order Data', orderData);
     // Check if the order is created after the checkout process is completed
     if (orderData && orderData.attributes && orderData.attributes.cart_token) {
         try {
@@ -48,9 +47,10 @@ router.post('/orders', async (req, res) => {
         }
     } else {
         // If the order does not contain a cart token, it might not be related to a completed checkout process
-        console.log('Invalid order payload');
+        const errorMessage = 'Invalid order payload: Missing or incomplete cart token';
+        console.error(errorMessage);
         // Respond with an error status
-        res.status(400).send('Invalid order payload');
+        res.status(400).send(errorMessage);
     }
 });
 
