@@ -54,6 +54,19 @@ router.post('/orders', async (req, res) => {
     }
 });
 
+
+
+
+router.get('/orders', async (req, res) => {
+    try {
+      const orders = await Order.find(); // This will find all completed orders
+      res.status(200).json(orders);
+    } catch (error) {
+      console.error('Error retrieving products:', error);
+      res.status(500).json({ message: 'Error retrieving products', error: error });
+    }
+  });
+
 router.get('/orders/:cart_token', async (req, res) => {
     const cartToken = req.params.cart_token;
 
