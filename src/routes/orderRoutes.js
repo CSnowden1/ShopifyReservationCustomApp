@@ -16,27 +16,6 @@ const shopify = new Shopify({
 router.use(bodyParser.json());
 
 
-router.post('/orders', async (req, res) => {
-    try {
-        // Extract relevant fields from the request body
-        const { cart_id, cart_token, admin_graphql_api_id, name, total_price, customer } = req.body;
-
-        // Create a new Order instance
-        const newOrder = new Order({
-            cart_token: cart_token,
-            cart_id : cart_id
-        });
-
-        // Save the new order to the database
-        const savedOrder = await newOrder.save();
-
-        console.log('Order saved successfully:', savedOrder);
-        res.status(200).send('Order saved successfully');
-    } catch (error) {
-        console.error('Error saving order:', error);
-        res.status(500).send('Error saving order');
-    }
-});
 
 
 router.get('/orders', async (req, res) => {

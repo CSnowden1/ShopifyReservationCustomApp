@@ -248,6 +248,7 @@ function updateProductQuantity(variantId, quantity) {
     try {
         // Extract relevant fields from the request body
         const { cart_id, cart_token } = req.body;
+        console.log(cart_id, cart_token);
 
         // Create a new Order instance
         const newOrder = new Order({
