@@ -243,4 +243,50 @@ function updateProductQuantity(variantId, quantity) {
 
 
 
+
+  
+router.post('/orders', (req, res) => {
+  console.log("Using route")
+  console.log('Received order webhook:', req.body);
+  res.status(200).send('Webhook data received');
+});
+
+
+router.get('/orders', async (req, res) => {
+  try {
+    const orders = await Order.find(); // This will find all completed orders
+    res.status(200).json(orders);
+  } catch (error) {
+    console.error('Error retrieving products:', error);
+    res.status(500).json({ message: 'Error retrieving products', error: error });
+  }
+});
+
+
+
+router.get('/orders/:cart_token', async (req, res) => {
+  const cartToken = req.params.cart_token;
+
+  try {
+      // Find orders associated with the provided cart token
+      const orders = await Order.find({ cartId: cartToken });
+
+      if (orders.length > 0) {
+          // If orders are found, send them as a response
+          res.status(200).json(orders);
+      } else {
+          // If no orders are found, send a message indicating so
+          console.log('No orders found for cart token:', cartToken);
+          res.status(404).send('No orders found for the provided cart token');
+      }
+  } catch (error) {
+      // If an error occurs during the database operation, log the error and send a 500 status code
+      console.error('Error retrieving orders:', error);
+      res.status(500).send('Error retrieving orders');
+  }
+});
+
+
+
+
 module.exports = router;
