@@ -20,14 +20,14 @@ router.use(bodyParser.json());
 
 router.post('/orders', async (req, res) => {
     try {
-        const { cart_id, cart_token } = req.body;
-        console.log(req.body.cart_id, req.body.cart_token);
+        const { checkout_id, cart_token } = req.body;
+        console.log(req.body.checkout_id, req.body.cart_token);
         console.log("Body fetch", req.body)
 
         // Create a new Order instance
         const newOrder = new Order({
             cart_token: cart_token,
-            checkout_id : cart_id
+            checkout_id : checkout_id
         });
 
         // Save the new order to the database
