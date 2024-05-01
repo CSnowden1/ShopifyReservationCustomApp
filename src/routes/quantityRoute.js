@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 const Shopify = require('shopify-api-node');
 const Product = require('../models/product');
 const CartSession = require('../models/cartSession');
-const Order = require('../models/order'); // Import the Order model
+const Order = require('../models/orders'); // Import the Order model
 const {
   monitorExpiredSessions,
   updateProductQuantity,
