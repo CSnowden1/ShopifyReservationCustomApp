@@ -17,6 +17,7 @@ router.use(bodyParser.json());
 
 
 router.post('/orders', (req, res) => {
+    console.log("Using route")
     console.log('Received order webhook:', req.body);
     res.status(200).send('Webhook data received');
 });
@@ -31,6 +32,8 @@ router.get('/orders', async (req, res) => {
       res.status(500).json({ message: 'Error retrieving products', error: error });
     }
   });
+
+
 
 router.get('/orders/:cart_token', async (req, res) => {
     const cartToken = req.params.cart_token;
@@ -53,5 +56,8 @@ router.get('/orders/:cart_token', async (req, res) => {
         res.status(500).send('Error retrieving orders');
     }
 });
+
+
+
 
 module.exports = router;
