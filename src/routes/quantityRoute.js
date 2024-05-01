@@ -11,7 +11,7 @@ const {
   monitorExpiredSessions,
   updateProductQuantity,
   startMonitoring
-} = require('../backgroundProcessModule');
+} = require('../db/cartSessionMonitor');
 
 const router = express.Router();
 
