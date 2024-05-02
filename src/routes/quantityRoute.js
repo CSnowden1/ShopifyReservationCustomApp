@@ -26,6 +26,7 @@ const shopify = new Shopify({
 router.use(bodyParser.json());
 
 // Route to update quantity of a Shopify product
+// Route to update quantity of a Shopify product
 router.put('/products/:productId/variants/:variantID/quantity', async (req, res) => {
   const productId = req.params.productId;
   const { quantity, cartToken } = req.body;
@@ -41,16 +42,22 @@ router.put('/products/:productId/variants/:variantID/quantity', async (req, res)
     // Fetch the product from Shopify
     const product = await shopify.product.get(productId);
 
-    // Update the quantity of the product
-    product.variants[0].inventory_quantity = quantity;
-
-    // Save the updated product
-    await shopify.product.update(productId, product);
+    // Find the specific variant using the variant ID from the URL
+    const variant = product.variants.find(v => v.id === parseInt(req.params.variantID));
+    if (variant) {
+        // Update the inventory quantity of the specific variant
+        variant.inventory_quantity = quantity;
+        await shopify.productVariant.update(variant.id, { inventory_quantity: quantity });
+        console.log('Variant quantity updated successfully');
+    } else {
+        console.log('Variant not found');
+        return res.status(404).json({ success: false, message: 'Variant not found.' });
+    }
 
     // Delete the cart session associated with the updated product
     await CartSession.deleteMany({ variantId: req.params.variantID });
 
-    // Call the function to update product quantity after a cart session expires
+    // Optionally call the function to update product quantity after a cart session expires
     await updateProductQuantity(req.params.variantID, quantity);
 
     res.status(200).json({ success: true, message: 'Product quantity updated successfully.' });
@@ -59,7 +66,6 @@ router.put('/products/:productId/variants/:variantID/quantity', async (req, res)
     res.status(500).json({ success: false, message: 'Failed to update product quantity.' });
   }
 });
-
 // Route to clear the cart
 router.post('/clear-cart', async (req, res) => {
   try {

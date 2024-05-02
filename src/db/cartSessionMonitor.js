@@ -32,16 +32,14 @@ startMonitoring();
 // Function to update product quantity after a cart session expires
 const updateProductQuantity = async (variantId, quantity) => {
     try {
-        // Find the product using the variant ID
-        const product = await Product.findOne({ variantId: variantId });
-        if (!product) {
+        const updateResult = await Product.updateOne(
+            { variantId: variantId },
+            { $inc: { quantity: quantity } }
+        );
+        if (updateResult.matchedCount === 0) {
             console.error('Product not found');
             return;
         }
-        // Calculate the new quantity by adding the cart quantity back to the product quantity
-        const newQuantity = product.quantity + quantity;
-        // Update the product quantity
-        await Product.updateOne({ variantId: variantId }, { quantity: newQuantity });
         console.log('Product quantity updated successfully');
     } catch (error) {
         console.error('Error updating product quantity:', error);
