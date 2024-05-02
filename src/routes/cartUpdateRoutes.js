@@ -29,6 +29,42 @@ async function shouldStartCheckoutSession(itemId) {
 }
 
 
+async function adjustShopifyInventory(variantId, quantityToAdd) {
+  try {
+      // Fetch the variant details including its inventory item ID
+      const variant = await shopify.productVariant.get(variantId);
+      const inventoryItemId = variant.inventory_item_id;
+
+      // Fetch the inventory levels for the inventory item
+      const inventoryLevels = await shopify.inventoryLevel.list({ inventory_item_ids: inventoryItemId });
+
+      if (inventoryLevels.length > 0) {
+          // Assuming the first location is the primary one or has sufficient logic to select the right one
+          const locationId = inventoryLevels[0].location_id;
+
+          // Adjust the inventory level
+          await shopify.inventoryLevel.adjust({
+              inventory_item_id: inventoryItemId,
+              location_id: locationId,
+              available_adjustment: -quantityToAdd // Negative to decrease stock
+          });
+
+          console.log(`Inventory adjusted by ${-quantityToAdd} for variant ID ${variantId}`);
+          return { success: true, message: 'Inventory updated successfully.' };
+      } else {
+          throw new Error('No inventory levels found for the specified variant');
+      }
+  } catch (error) {
+      console.error('Error adjusting Shopify inventory:', error);
+      return { success: false, message: 'Failed to update inventory.', error: error.message };
+  }
+}
+
+
+
+
+
+
 
 router.put('/carts-sessions/:token', async (req, res) => { 
     try {
@@ -52,21 +88,16 @@ router.put('/carts-sessions/:token', async (req, res) => {
 router.post('/cart-sessions', async (req, res) => {
     try {
         console.log('Webhook Received(Testing route):', req.body);
+        const { line_items } = req.body;
+        console.log(line_items)
 
-        for (const item of req.body.line_items) {
-          const variantId = item.variant_id;
-          const quantityToAdd = item.quantity; // this should be a negative number to decrease stock
-
-          // Fetch current inventory level from Shopify
-          let variant = await shopify.productVariant.get(variantId);
-          let newQuantity = variant.inventory_quantity - quantityToAdd;
-
-          // Update the inventory quantity on Shopify
-          await shopify.productVariant.update(variantId, {
-              inventory_quantity: newQuantity
-          });
+      for (const item of line_items) {
+        console.log("Updating Shopify Quantity", item);
+          const response = await adjustShopifyInventory(item.variant_id, item.quantity);
+          if (!response.success) {
+              return res.status(500).json(response);
+          }
       }
-
         const existingSession = await CartSession.findOne({ cartId: req.body.token });
 
         if (existingSession) {
