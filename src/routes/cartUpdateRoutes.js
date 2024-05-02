@@ -51,56 +51,51 @@ router.put('/carts-sessions/:token', async (req, res) => {
 
 
 router.post('/cart-sessions', async (req, res) => {
-  const { line_items, token } = req.body;
+    const { line_items, token } = req.body;
 
-  try {
-      console.log('Webhook Received:', req.body);
-      
-      // Iterate over line items to update Shopify inventory and manage session
-      for (let item of line_items) {
-          // Check if session needs to be started based on your criteria
-          if (await shouldStartCheckoutSession(item.variant_id)) {
-              const product = await Product.findOne({ variantId: item.variant_id });
+    try {
+        console.log('Webhook Received:', req.body);
+        
+        // Iterate over line items to update Shopify inventory and manage session
+        for (let item of line_items) {
+            // Check if session needs to be started based on your criteria
+            if (await shouldStartCheckoutSession(item.variant_id)) {
+                const product = await Product.findOne({ variantId: item.variant_id });
 
-              if (product) {
-                  // Decrement Shopify inventory
-                  const variant = await shopify.productVariant.get(item.variant_id);
-                  const newQuantity = variant.inventory_quantity - item.quantity;
-                  await shopify.productVariant.update(item.variant_id, { inventory_quantity: newQuantity });
+                if (product) {
+                    // Decrement Shopify inventory
+                    const variant = await shopify.productVariant.get(item.variant_id);
+                    const newQuantity = variant.inventory_quantity - item.quantity;
+                    await shopify.productVariant.update(item.variant_id, { inventory_quantity: newQuantity });
 
-                  // Manage cart session
-                  let existingSession = await CartSession.findOne({ cartId: token, variantId: item.variant_id });
+                    // Manage cart session
+                    let existingSession = await CartSession.findOne({ cartId: token, variantId: item.variant_id });
 
-                  if (existingSession) {
-                      existingSession.quantity += item.quantity;
-                      existingSession.productId = item.product_id;
-                        existingSession.variantId = item.variant_id;
-                        existingSession.title = item.title;
-                  } else {
-                      existingSession = new CartSession({
-                          cartId: token,
-                          productId: item.product_id,
-                          variantId: item.variant_id,
-                          title: item.title,
-                          quantity: item.quantity
-                      });
-                  }
-                  
-                  await existingSession.save();
-              } else {
-                  console.log(`Product with variant ID ${item.variant_id} not found in local database.`);
-              }
-          }
-      }
-      
-      res.status(200).send('Cart session updated and inventory adjusted on Shopify.');
-  } catch (error) {
-      console.error('Error processing cart session and updating Shopify:', error);
-      res.status(500).send('An error occurred while processing the request');
-  }
+                    if (existingSession) {
+                        existingSession.quantity += item.quantity;
+                    } else {
+                        existingSession = new CartSession({
+                            cartId: token,
+                            productId: item.product_id,
+                            variantId: item.variant_id,
+                            title: item.title,
+                            quantity: item.quantity
+                        });
+                    }
+                    
+                    await existingSession.save();
+                } else {
+                    console.log(`Product with variant ID ${item.variant_id} not found in local database.`);
+                }
+            }
+        }
+        
+        res.status(200).send('Cart session updated and inventory adjusted on Shopify.');
+    } catch (error) {
+        console.error('Error processing cart session and updating Shopify:', error);
+        res.status(500).send('An error occurred while processing the request');
+    }
 });
-
-
 
 
 router.get('/list-webhooks', async (req, res) => {
