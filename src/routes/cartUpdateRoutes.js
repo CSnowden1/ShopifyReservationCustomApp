@@ -209,20 +209,33 @@ router.get('/cart-sessions/:cartId', async (req, res) => {
 
 
 
-
 router.delete('/cart-sessions/:cartId', async (req, res) => {
   try {
+    // First, check if there is an order associated with the cartId
+    const orderExists = await Order.findOne({ cartId: req.params.cartId });
+
+    // Find and delete the cart session regardless of order existence
     const deletedSession = await CartSession.findOneAndDelete({ cartId: req.params.cartId });
     if (!deletedSession) {
       return res.status(404).json({ message: "No cart session found with that ID." });
     }
-    res.status(200).json({ message: 'Cart session successfully deleted', deletedSession: deletedSession });
+
+    // If no order exists, then restore the inventory quantities
+    if (!orderExists) {
+      for (const item of deletedSession.items) {
+        let variant = await shopify.productVariant.get(item.variantId);
+        let newQuantity = variant.inventory_quantity + item.quantity;
+        await shopify.productVariant.update(item.variantId, { inventory_quantity: newQuantity });
+      }
+      res.status(200).json({ message: 'Cart session deleted and inventory restored', deletedSession: deletedSession });
+    } else {
+      res.status(200).json({ message: 'Cart session deleted but inventory not restored due to existing order', deletedSession: deletedSession });
+    }
   } catch (error) {
     console.error('Error deleting cart session:', error);
     res.status(500).json({ message: 'Error deleting cart session', error: error });
   }
 });
-
 
 
 
