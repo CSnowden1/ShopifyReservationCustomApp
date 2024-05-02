@@ -49,86 +49,57 @@ router.put('/carts-sessions/:token', async (req, res) => {
 
 
 
+
 router.post('/cart-sessions', async (req, res) => {
-    try {
-        console.log('Webhook Received(Testing route):', req.body);
-        const existingSession = await CartSession.findOne({ cartId: req.body.token });
+  const { line_items, token } = req.body;
 
-        if (existingSession) {
-            console.log('Session already exists, updating...');
-            let updateNeeded = false; // Flag to track if we need to update
+  try {
+      console.log('Webhook Received:', req.body);
+      
+      // Iterate over line items to update Shopify inventory and manage session
+      for (let item of line_items) {
+          // Check if session needs to be started based on your criteria
+          if (await shouldStartCheckoutSession(item.variant_id)) {
+              const product = await Product.findOne({ variantId: item.variant_id });
 
-            // Iterate over line items to find a valid product and update session
-            for (let i = 0; i < req.body.line_items.length; i++) {
-                let item = req.body.line_items[i];
-                if (shouldStartCheckoutSession(item.id)) {
-                    const product = await Product.findOne({ variantId: item.variant_id });
-                    if (product && item.quantity <= product.liveQuantity) {
-                        // Update the existing session with new information
-                        existingSession.productId = item.product_id;
+              if (product) {
+                  // Decrement Shopify inventory
+                  const variant = await shopify.productVariant.get(item.variant_id);
+                  const newQuantity = variant.inventory_quantity - item.quantity;
+                  await shopify.productVariant.update(item.variant_id, { inventory_quantity: newQuantity });
+
+                  // Manage cart session
+                  let existingSession = await CartSession.findOne({ cartId: token, variantId: item.variant_id });
+
+                  if (existingSession) {
+                      existingSession.quantity += item.quantity;
+                      existingSession.productId = item.product_id;
                         existingSession.variantId = item.variant_id;
                         existingSession.title = item.title;
-                        existingSession.quantity = item.quantity;
-
-                        product.liveQuantity -= item.quantity; // Update inventory
-                        await product.save();
-
-                        updateNeeded = true; // Set flag indicating that update is needed
-                        break; // Assuming only one session update is needed per cart
-                    }
-                }
-            }
-
-            if (updateNeeded) {
-                await existingSession.save();
-                console.log('Cart Session Updated:', existingSession);
-                res.status(200).send('Session updated successfully');
-            } else {
-                console.log('No updates made to the session.');
-                res.status(200).send('No updates required for the session');
-            }
-            return;
-        }
-
-        // If no existing session, proceed to create a new session
-        console.log("No existing session, creating a new one.");
-        for (let i = 0; i < req.body.line_items.length; i++) {
-            let item = req.body.line_items[i];
-            console.log("Looping through", item);
-            if (shouldStartCheckoutSession(item.id)) {
-                console.log("Looking for product", item.id);
-                const product = await Product.findOne({ variantId: item.id });
-
-                if (product && item.quantity <= product.liveQuantity) {
-                    console.log("Found product", product);
-                    const startTime = new Date();
-                    const endTime = new Date(startTime.getTime() + product.reservationDuration * 60000);
-
-                    const newCartSession = new CartSession({
-                        cartId: req.body.token,
-                        productId: item.product_id,
-                        variantId: item.variant_id,
-                        duration: product.reservationDuration,
-                        title: item.title,
-                        quantity: item.quantity,
-                        startTime,
-                        endTime,
-                    });
-
-                    await newCartSession.save();
-                    console.log('New Cart Session Saved:', newCartSession);
-                    break; 
-                } else {
-                    console.log(`Not enough inventory for variant ${item.variant_id}`);
-                }
-            }
-        }
-        res.status(200).send('Webhook processed');
-    } catch (error) {
-        console.error('Error processing webhook:', error);
-        res.status(500).send('An error occurred while processing the webhook');
-    }
+                  } else {
+                      existingSession = new CartSession({
+                          cartId: token,
+                          productId: item.product_id,
+                          variantId: item.variant_id,
+                          title: item.title,
+                          quantity: item.quantity
+                      });
+                  }
+                  
+                  await existingSession.save();
+              } else {
+                  console.log(`Product with variant ID ${item.variant_id} not found in local database.`);
+              }
+          }
+      }
+      
+      res.status(200).send('Cart session updated and inventory adjusted on Shopify.');
+  } catch (error) {
+      console.error('Error processing cart session and updating Shopify:', error);
+      res.status(500).send('An error occurred while processing the request');
+  }
 });
+
 
 
 

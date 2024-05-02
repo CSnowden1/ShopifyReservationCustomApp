@@ -1,6 +1,4 @@
 // routes/shopifyRoutes.js
-
-
 const express = require('express');
 const bodyParser = require('body-parser');
 const Shopify = require('shopify-api-node');
@@ -66,6 +64,8 @@ router.put('/products/:productId/variants/:variantID/quantity', async (req, res)
     res.status(500).json({ success: false, message: 'Failed to update product quantity.' });
   }
 });
+
+
 // Route to clear the cart
 router.post('/clear-cart', async (req, res) => {
   try {
