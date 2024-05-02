@@ -52,11 +52,26 @@ router.put('/carts-sessions/:token', async (req, res) => {
 router.post('/cart-sessions', async (req, res) => {
     try {
         console.log('Webhook Received(Testing route):', req.body);
+
+        for (const item of req.body.line_items) {
+          const variantId = item.variant_id;
+          const quantityToAdd = item.quantity; // this should be a negative number to decrease stock
+
+          // Fetch current inventory level from Shopify
+          let variant = await shopify.productVariant.get(variantId);
+          let newQuantity = variant.inventory_quantity - quantityToAdd;
+
+          // Update the inventory quantity on Shopify
+          await shopify.productVariant.update(variantId, {
+              inventory_quantity: newQuantity
+          });
+      }
+
         const existingSession = await CartSession.findOne({ cartId: req.body.token });
 
         if (existingSession) {
             console.log('Session already exists, updating...');
-            let updateNeeded = false; // Flag to track if we need to update
+            let updateNeeded = false;
 
             // Iterate over line items to find a valid product and update session
             for (let i = 0; i < req.body.line_items.length; i++) {
@@ -64,13 +79,11 @@ router.post('/cart-sessions', async (req, res) => {
                 if (shouldStartCheckoutSession(item.id)) {
                     const product = await Product.findOne({ variantId: item.variant_id });
                     if (product && item.quantity <= product.liveQuantity) {
-                        // Update the existing session with new information
                         existingSession.productId = item.product_id;
                         existingSession.variantId = item.variant_id;
                         existingSession.title = item.title;
                         existingSession.quantity = item.quantity;
-
-                        product.liveQuantity -= item.quantity; // Update inventory
+                        product.liveQuantity -= item.quantity;
                         await product.save();
 
                         updateNeeded = true; // Set flag indicating that update is needed
